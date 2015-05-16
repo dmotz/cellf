@@ -50,7 +50,7 @@ h1 {
     position: relative;
 }
 
-.tile {
+.cell {
     background-color: #ccc;
     color: #444;
     line-height: 200px;
@@ -60,7 +60,7 @@ h1 {
     overflow: hidden;
 }
 
-.tile img {
+.cell img {
     position: absolute;
     top: 0;
     left: 0;
@@ -68,16 +68,16 @@ h1 {
     width: 300%;
 }
 
-.tile video {
+.cell video {
     position: absolute;
     top: 0;
     left: 0;
 }
 
-.tile.adjacent {
+.cell.adjacent {
     cursor: pointer;
 }
 
-.tile.empty {
+.cell.empty {
     visibility: hidden;
 }

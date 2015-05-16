@@ -27,7 +27,7 @@
       (recur)))
     c))
 
-(defn capture-move [{:keys [ctx vid-node canvas-node vid-w vid-h]} tiles]
+(defn capture-move [{:keys [ctx vid-node canvas-node vid-w vid-h]} cells]
   (.drawImage ctx vid-node (/ (- vid-w vid-h) 2) 0 vid-h vid-h 0 0 capture-size capture-size)
   (let [img-data (.toDataURL canvas-node "image/jpeg" 1)
         img-el   (js/Image.)
@@ -37,38 +37,38 @@
     (aset img-el "onload" (fn []
       (js-delete img-el "onload")
       (put! pc img-el)))
-    {:tiles tiles :image img-data}))
+    {:cells cells :image img-data}))
 
-(defn make-tile-list [size]
+(defn make-cell-list [size]
   (conj (vec (range (dec (sq size)))) :empty))
 
-(defn make-tiles [size win-state]
-  (let [shuffled (zipmap (make-tile-list size) (shuffle (range (sq size))))]
+(defn make-cells [size win-state]
+  (let [shuffled (zipmap (make-cell-list size) (shuffle (range (sq size))))]
     (if (= shuffled win-state) (recur size win-state) shuffled)))
 
 (defn make-win-state [size]
-  (zipmap (make-tile-list size) (range (sq size))))
+  (zipmap (make-cell-list size) (range (sq size))))
 
 (defn make-game
   ([app size]
     (make-game app size tick-ms))
   ([app size speed]
     (let [win-state (make-win-state size)
-          tiles     (make-tiles size win-state)]
+          cells     (make-cells size win-state)]
       {
-        :moves     [(capture-move app tiles)]
+        :moves     [(capture-move app cells)]
         :tick      0
         :tick-ms   tick-ms
         :grid-size size
-        :tiles     tiles
+        :cells     cells
         :win-state win-state})))
 
-(def get-tile-xy (juxt mod quot))
+(def get-cell-xy (juxt mod quot))
 
-(defn get-tile-transform [app i]
+(defn get-cell-transform [app i]
   (let [size  (:grid-size app)
         pct   (str (/ 100 size) \%)
-        [x y] (get-tile-xy i size)]
+        [x y] (get-cell-xy i size)]
     #js {
       :transform (t3d (* 100 x) (* 100 y))
       :width     pct
@@ -80,7 +80,7 @@
     nil
     (let [size  (:grid-size app)
           pct   (/ 100 size)
-          [x y] (get-tile-xy i size)]
+          [x y] (get-cell-xy i size)]
       #js {
         :height    (str (* size 100) "%")
         :transform (t3d
@@ -89,7 +89,7 @@
 
 
 (defn adj? [app i]
-  (let [{size :grid-size {emp :empty} :tiles} app]
+  (let [{size :grid-size {emp :empty} :cells} app]
     (or
       (= i (- emp size))
       (and (= i (dec emp)) (pos? (mod emp size)))
@@ -97,18 +97,18 @@
       (= i (+ emp size)))))
 
 
-(defn swap-tile [tiles n]
-  (let [current-idx (tiles n)
-        empty-idx   (:empty tiles)]
+(defn swap-cell [cells n]
+  (let [current-idx (cells n)
+        empty-idx   (:empty cells)]
     (into {} (map (fn [[k idx]]
       (if (= k :empty)
         [:empty current-idx]
-        (if (= k n) [k empty-idx] [k idx]))) tiles))))
+        (if (= k n) [k empty-idx] [k idx]))) cells))))
 
 
 (defn move! [{:keys [moves win-state] :as app} n]
-  (let [new-layout (swap-tile (:tiles app) n)]
-    (om/update! app :tiles new-layout)
+  (let [new-layout (swap-cell (:cells app) n)]
+    (om/update! app :cells new-layout)
     (om/update! app :moves (conj moves (capture-move app new-layout)))))
 
 
@@ -117,15 +117,15 @@
   (om/update! app (merge app (make-game app size speed))))
 
 
-(defn tile [app [n idx]]
+(defn cell [app [n idx]]
   (let [is-adj   (adj? app idx)
         is-empty (= n :empty)]
     (dom/div #js {
       :react-key n
       :className (str
-        "tile"
+        "cell"
         (if is-empty " empty" (when is-adj " adjacent")))
-      :style   (get-tile-transform app idx)
+      :style   (get-cell-transform app idx)
       :onClick #(when is-adj (move! app n))}
         (when-not is-empty
           (dom/video #js {
@@ -136,7 +136,7 @@
 (defn grid [{:keys [grid-px] :as app}]
   (om/component
     (apply dom/div #js {:className "grid" :style #js {:width grid-px :height grid-px}}
-      (map (partial tile app) (:tiles app)))))
+      (map (partial cell app) (:cells app)))))
 
 (defn set-grid-size! [app size]
   (when (and (integer? size) (> size 1) (< size 10))
@@ -154,10 +154,10 @@
   (take! (@img-cache tick) (fn [img]
     (let [ts (/ capture-size grid-size)]
       (.clearRect playback-ctx 0 0 capture-size capture-size)
-      (doseq [[idx pos] (:tiles (moves tick))]
+      (doseq [[idx pos] (:cells (moves tick))]
         (if-not (= idx :empty)
-          (let [[x1 y1] (get-tile-xy idx grid-size)
-                [x2 y2] (get-tile-xy pos grid-size)]
+          (let [[x1 y1] (get-cell-xy idx grid-size)
+                [x2 y2] (get-cell-xy pos grid-size)]
             (.drawImage playback-ctx img (* x1 ts) (* y1 ts) ts ts (* x2 ts) (* y2 ts) ts ts))))
       (.drawImage playback-ctx img 0 capture-size)))))
 
@@ -215,7 +215,7 @@
 
 
 (om/root
-    (fn [{:keys [stream tiles win-state moves tick tick-ms grid-size media-error?] :as app} _]
+    (fn [{:keys [stream cells win-state moves tick tick-ms grid-size media-error?] :as app} _]
       (reify
         om/IDidMount
         (did-mount [_]
@@ -250,7 +250,7 @@
 
                 (when stream
                   (dom/div nil
-                    (when (= tiles win-state)
+                    (when (= cells win-state)
                       (dom/h1 nil "You win!"))
 
                     (dom/p
@@ -284,5 +284,3 @@
                 (dom/div #js {:className "warning"} "Error accessing camera.")))))))
     app-state
     {:target (.getElementById js/document "app")})
-
-
