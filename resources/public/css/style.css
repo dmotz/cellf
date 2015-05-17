@@ -79,5 +79,5 @@ h1 {
 }
 
 .cell.empty {
-    visibility: hidden;
+    display: none;
 }
