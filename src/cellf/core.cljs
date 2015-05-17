@@ -130,7 +130,7 @@
             :src      (:stream app)
             :autoPlay "autoplay"
             :style    (get-bg-transform app n)})
-          (dom/label nil n)))))
+          (dom/label nil (inc n))))))
 
 
 (defn grid [{:keys [grid-px] :as app}]
