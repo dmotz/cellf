@@ -193,32 +193,31 @@
           (recur 0)
           (recur (inc tick)))))))
 
-(defn on-js-reload [])
 
 (defonce gum (take! (media/get-media) (fn [{:keys [status data]}]
-    (if (= status :success)
-      (let [video  (.createElement js/document "video")
-            canvas (.createElement js/document "canvas")]
-        (aset canvas "width" capture-size)
-        (aset canvas "height" capture-size)
-        (aset video "autoplay" "autoplay")
-        (aset video "onplaying" (fn []
-          (let [vw (.-videoWidth video)
-                vh (.-videoHeight video)]
-            (js-delete video "onplaying")
-            (swap! app-state merge {
-              :stream      data
-              :grid-px     (get-max-grid-px)
-              :vid-node    video
-              :vid-w       vw
-              :vid-h       vh
-              :vid-ratio   (/ vw vh)
-              :vid-offset  (* 100 (/ (max 1 (.abs js/Math (- vw vh))) (max 1 (* vw 2))))
-              :canvas-node canvas
-              :ctx         (.getContext canvas "2d")})
-            (js/setTimeout start! 500))))
-        (aset video "src" data))
-      (swap! app-state assoc :media-error? true)))))
+  (if (= status :success)
+    (let [video  (.createElement js/document "video")
+          canvas (.createElement js/document "canvas")]
+      (aset canvas "width" capture-size)
+      (aset canvas "height" capture-size)
+      (aset video "autoplay" "autoplay")
+      (aset video "onplaying" (fn []
+        (let [vw (.-videoWidth video)
+              vh (.-videoHeight video)]
+          (js-delete video "onplaying")
+          (swap! app-state merge {
+            :stream      data
+            :grid-px     (get-max-grid-px)
+            :vid-node    video
+            :vid-w       vw
+            :vid-h       vh
+            :vid-ratio   (/ vw vh)
+            :vid-offset  (* 100 (/ (max 1 (.abs js/Math (- vw vh))) (max 1 (* vw 2))))
+            :canvas-node canvas
+            :ctx         (.getContext canvas "2d")})
+          (js/setTimeout start! 500))))
+      (aset video "src" data))
+    (swap! app-state assoc :media-error? true)))))
 
 
 (om/root
