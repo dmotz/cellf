@@ -269,7 +269,9 @@
                       :checked  show-nums
                       :onChange #(om/update! app :show-nums (not show-nums))})
 
-                    (dom/label nil (str "grid-size (" grid-size \× grid-size ")"))
+                    (dom/label nil
+                      (str "grid-size (" grid-size \× grid-size ")")
+                      (dom/em nil "(starts new game)"))
                     (dom/input #js {
                       :type     "range"
                       :value    grid-size
