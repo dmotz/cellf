@@ -58,7 +58,7 @@
       {
         :moves     [(capture-move app cells)]
         :tick      0
-        :tick-ms   tick-ms
+        :tick-ms   speed
         :grid-size size
         :cells     cells
         :win-state win-state})))
