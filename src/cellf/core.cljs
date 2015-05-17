@@ -135,10 +135,14 @@
           (dom/label nil (inc n))))))
 
 
-(defn grid [{:keys [grid-px] :as app}]
+(defn grid [{:keys [cells grid-px show-nums] :as app}]
   (om/component
-    (apply dom/div #js {:className "grid" :style #js {:width grid-px :height grid-px}}
-      (map (partial cell app) (:cells app)))))
+    (apply dom/div #js {
+      :className (str "grid" (when show-nums " show-nums"))
+      :style #js {:width grid-px :height grid-px}}
+
+      (map (partial cell app) cells))))
+
 
 (defn set-grid-size! [app size]
   (when (and (integer? size) (> size 1) (< size 10))
@@ -154,13 +158,13 @@
 
 (defn paint-canvas! [{:keys [moves grid-size]} tick]
   (take! (@img-cache tick) (fn [img]
-    (let [ts (/ capture-size grid-size)]
+    (let [s (/ capture-size grid-size)]
       (.clearRect playback-ctx 0 0 capture-size capture-size)
       (doseq [[idx pos] (:cells (moves tick))]
         (if-not (= idx :empty)
           (let [[x1 y1] (get-cell-xy idx grid-size)
                 [x2 y2] (get-cell-xy pos grid-size)]
-            (.drawImage playback-ctx img (* x1 ts) (* y1 ts) ts ts (* x2 ts) (* y2 ts) ts ts))))
+            (.drawImage playback-ctx img (* x1 s) (* y1 s) s s (* x2 s) (* y2 s) s s))))
       (.drawImage playback-ctx img 0 capture-size)))))
 
 (defonce app-state (atom {}))
@@ -217,7 +221,7 @@
 
 
 (om/root
-    (fn [{:keys [stream cells win-state moves tick tick-ms grid-size media-error?] :as app} _]
+    (fn [{:keys [stream cells win-state moves tick-ms grid-size media-error? show-nums] :as app} _]
       (reify
         om/IDidMount
         (did-mount [_]
@@ -259,8 +263,13 @@
                       #js {:className "move-count"}
                       (str move-count " move" (when (> move-count 1) "s")))
 
-                    (dom/label nil "grid-size:")
-                    (dom/label nil (str grid-size \× grid-size))
+                    (dom/label nil "show numbers?")
+                    (dom/input #js {
+                      :type     "checkbox"
+                      :checked  show-nums
+                      :onChange #(om/update! app :show-nums (not show-nums))})
+
+                    (dom/label nil (str "grid-size (" grid-size \× grid-size ")"))
                     (dom/input #js {
                       :type     "range"
                       :value    grid-size
@@ -269,7 +278,7 @@
                       :step     "1"
                       :onChange #(set-grid-size! app (js/parseInt (.. % -target -value)))})
 
-                    (dom/label nil "playback speed:")
+                    (dom/label nil "playback speed")
                     (dom/input #js {
                       :type     "range"
                       :value    (- tick-ms)
