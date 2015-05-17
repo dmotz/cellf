@@ -118,9 +118,8 @@
 
 
 (defn cell [app [n idx]]
-  (let [is-adj (adj? app idx)]
-    (if (= n :empty)
-      (dom/div #js {:react-key n :className "cell empty"})
+  (if (not= n :empty)
+    (let [is-adj (adj? app idx)]
       (dom/div #js {
         :react-key n
         :className (str "cell" (when is-adj " adjacent"))
