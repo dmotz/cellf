@@ -118,20 +118,20 @@
 
 
 (defn cell [app [n idx]]
-  (let [is-adj   (adj? app idx)
-        is-empty (= n :empty)]
-    (dom/div #js {
-      :react-key n
-      :className (str
-        "cell"
-        (if is-empty " empty" (when is-adj " adjacent")))
-      :style   (get-cell-transform app idx)
-      :onClick #(when is-adj (move! app n))}
-        (when-not is-empty
+  (let [is-adj (adj? app idx)]
+    (if (= n :empty)
+      (dom/div #js {:react-key n :className "cell empty"})
+      (dom/div #js {
+        :react-key n
+        :className (str "cell" (when is-adj " adjacent"))
+        :style     (get-cell-transform app idx)
+        :onClick   #(when is-adj (move! app n))}
           (dom/video #js {
             :src      (:stream app)
             :autoPlay "autoplay"
-            :style    (get-bg-transform app n)})))))
+            :style    (get-bg-transform app n)})
+          (dom/label nil n)))))
+
 
 (defn grid [{:keys [grid-px] :as app}]
   (om/component
