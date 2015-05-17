@@ -181,13 +181,14 @@
   (swap! app-state merge (make-game @app-state default-size))
   (defonce tick-loop
     (go-loop [tick 0]
+      (<! (timeout (:tick-ms @app-state)))
+      (<! raf-chan)
       (let [app        @app-state
             moves      (:moves app)
-            move-count (count moves)]
+            move-count (count moves)
+            tick       (if (>= tick move-count) 0 tick)]
         (swap! app-state assoc :tick tick)
         (paint-canvas! app tick)
-        (<! raf-chan)
-        (<! (timeout (:tick-ms app)))
         (if (or (zero? move-count) (= tick (dec move-count)))
           (recur 0)
           (recur (inc tick)))))))
