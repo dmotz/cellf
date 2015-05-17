@@ -221,7 +221,7 @@
 
 
 (om/root
-    (fn [{:keys [stream cells win-state moves tick-ms grid-size media-error? show-nums] :as app} _]
+    (fn [{:keys [stream cells win-state moves tick tick-ms grid-size media-error? show-nums] :as app} _]
       (reify
         om/IDidMount
         (did-mount [_]
@@ -259,9 +259,9 @@
                     (when (= cells win-state)
                       (dom/h1 nil "You win!"))
 
-                    (dom/p
+                    (dom/label
                       #js {:className "move-count"}
-                      (str move-count " move" (when (> move-count 1) "s")))
+                      (str (inc tick) \/ move-count))
 
                     (dom/label nil "show numbers?")
                     (dom/input #js {
