@@ -65,14 +65,17 @@
 
 (def get-cell-xy (juxt mod quot))
 
-(defn get-cell-transform [app i]
+(defn get-cell-style [app i]
   (let [size  (:grid-size app)
         pct   (str (/ 100 size) \%)
+        px    (/ (:grid-px app) size)
         [x y] (get-cell-xy i size)]
     #js {
-      :transform (t3d (* 100 x) (* 100 y))
-      :width     pct
-      :height    pct}))
+      :transform  (t3d (* 100 x) (* 100 y))
+      :width      pct
+      :height     pct
+      :lineHeight (str px "px")
+      :fontSize   (/ px 10)}))
 
 
 (defn get-bg-transform [app i]
@@ -123,7 +126,7 @@
       (dom/div #js {
         :react-key n
         :className (str "cell" (when is-adj " adjacent"))
-        :style     (get-cell-transform app idx)
+        :style     (get-cell-style app idx)
         :onClick   #(when is-adj (move! app n))}
           (dom/video #js {
             :src      (:stream app)
