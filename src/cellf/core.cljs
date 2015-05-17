@@ -221,79 +221,79 @@
 
 
 (om/root
-    (fn [{:keys [stream cells win-state moves tick tick-ms grid-size media-error? show-nums] :as app} _]
-      (reify
-        om/IDidMount
-        (did-mount [_]
-          (def playback-ctx
-            (->
-              (.getElementById js/document "playback-canvas")
-              (.getContext "2d")))
+  (fn [{:keys [stream cells win-state moves tick tick-ms grid-size media-error? show-nums] :as app} _]
+    (reify
+      om/IDidMount
+      (did-mount [_]
+        (def playback-ctx
+          (->
+            (.getElementById js/document "playback-canvas")
+            (.getContext "2d")))
 
-          (defonce resize-loop
-            (let [resize-chan (chan)]
-              (.addEventListener js/window "resize" #(put! resize-chan 0))
-              (go-loop [open true]
-                (when open (<! resize-chan))
-                (let [throttle (timeout resize-ms)]
-                  (if (= throttle (last (alts! [throttle resize-chan])))
-                    (do
-                      (swap! app-state assoc :grid-px (get-max-grid-px))
-                      (recur true))
-                    (recur false)))))))
+        (defonce resize-loop
+          (let [resize-chan (chan)]
+            (.addEventListener js/window "resize" #(put! resize-chan 0))
+            (go-loop [open true]
+              (when open (<! resize-chan))
+              (let [throttle (timeout resize-ms)]
+                (if (= throttle (last (alts! [throttle resize-chan])))
+                  (do
+                    (swap! app-state assoc :grid-px (get-max-grid-px))
+                    (recur true))
+                  (recur false)))))))
 
-        om/IRender
-        (render [_]
-          (let [move-count (count moves)]
-            (dom/div nil
-              (dom/div #js {:id "sidebar" :style #js {:width capture-size}}
-                (dom/h1 nil "cellf")
-                (dom/p nil "find yourself.")
-                (dom/canvas #js {
-                  :id     "playback-canvas"
-                  :width  capture-size
-                  :height (* capture-size 2)})
+      om/IRender
+      (render [_]
+        (let [move-count (count moves)]
+          (dom/div nil
+            (dom/div #js {:id "sidebar" :style #js {:width capture-size}}
+              (dom/h1 nil "cellf")
+              (dom/p nil "find yourself.")
+              (dom/canvas #js {
+                :id     "playback-canvas"
+                :width  capture-size
+                :height (* capture-size 2)})
 
-                (when stream
-                  (dom/div nil
-                    (when (= cells win-state)
-                      (dom/h1 nil "You win!"))
+              (when stream
+                (dom/div nil
+                  (when (= cells win-state)
+                    (dom/h1 nil "You win!"))
 
-                    (dom/label
-                      #js {:className "move-count"}
-                      (str (inc tick) \/ move-count))
+                  (dom/label
+                    #js {:className "move-count"}
+                    (str (inc tick) \/ move-count))
 
-                    (dom/label nil "show numbers?")
-                    (dom/input #js {
-                      :type     "checkbox"
-                      :checked  show-nums
-                      :onChange #(om/update! app :show-nums (not show-nums))})
+                  (dom/label nil "show numbers?")
+                  (dom/input #js {
+                    :type     "checkbox"
+                    :checked  show-nums
+                    :onChange #(om/update! app :show-nums (not show-nums))})
 
-                    (dom/label nil
-                      (str "grid-size (" grid-size \× grid-size ")")
-                      (dom/em nil "(starts new game)"))
-                    (dom/input #js {
-                      :type     "range"
-                      :value    grid-size
-                      :min      "2"
-                      :max      "9"
-                      :step     "1"
-                      :onChange #(set-grid-size! app (js/parseInt (.. % -target -value)))})
+                  (dom/label nil
+                    (str "grid-size (" grid-size \× grid-size ")")
+                    (dom/em nil "(starts new game)"))
+                  (dom/input #js {
+                    :type     "range"
+                    :value    grid-size
+                    :min      "2"
+                    :max      "9"
+                    :step     "1"
+                    :onChange #(set-grid-size! app (js/parseInt (.. % -target -value)))})
 
-                    (dom/label nil "playback speed")
-                    (dom/input #js {
-                      :type     "range"
-                      :value    (- tick-ms)
-                      :min      "-1000"
-                      :max      "-30"
-                      :step     "10"
-                      :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))}))))
+                  (dom/label nil "playback speed")
+                  (dom/input #js {
+                    :type     "range"
+                    :value    (- tick-ms)
+                    :min      "-1000"
+                    :max      "-30"
+                    :step     "10"
+                    :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))}))))
 
-              (if stream
-                (om/build grid app)
-                (dom/div #js {:className "heads-up"} "To play Cellf, allow your camera."))
+            (if stream
+              (om/build grid app)
+              (dom/div #js {:className "heads-up"} "To play Cellf, allow your camera."))
 
-              (when media-error?
-                (dom/div #js {:className "warning"} "Error accessing camera.")))))))
-    app-state
-    {:target (.getElementById js/document "app")})
+            (when media-error?
+              (dom/div #js {:className "warning"} "Error accessing camera.")))))))
+  app-state
+  {:target (.getElementById js/document "app")})
