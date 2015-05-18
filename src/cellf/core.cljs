@@ -224,7 +224,7 @@
 
 
 (om/root
-  (fn [{:keys [stream cells win-state moves tick tick-ms grid-size media-error? show-nums] :as app} _]
+  (fn [{:keys [stream cells win-state moves tick tick-ms grid-size show-nums] :as app} _]
     (reify
       om/IDidMount
       (did-mount [_]
@@ -293,11 +293,6 @@
                     :step     "10"
                     :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))}))))
 
-            (if stream
-              (om/build grid app)
-              (dom/div #js {:className "heads-up"} "To play Cellf, allow your camera."))
-
-            (when media-error?
-              (dom/div #js {:className "warning"} "Error accessing camera.")))))))
+            (when stream (om/build grid app)))))))
   app-state
   {:target (.getElementById js/document "app")})
