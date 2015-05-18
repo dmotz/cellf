@@ -266,8 +266,9 @@
                     #js {:className "move-count"}
                     (str (inc tick) \/ move-count))
 
-                  (dom/label nil "show numbers?")
+                  (dom/label #js {:htmlFor "show-nums"} "show numbers?")
                   (dom/input #js {
+                    :id       "show-nums"
                     :type     "checkbox"
                     :checked  show-nums
                     :onChange #(om/update! app :show-nums (not show-nums))})
