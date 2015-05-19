@@ -217,10 +217,45 @@
                 :vid-ratio   (/ vw vh)
                 :vid-offset  (* 100 (/ (max 1 (.abs js/Math (- vw vh))) (max 1 (* vw 2))))
                 :canvas-node canvas
-                :ctx         (.getContext canvas "2d")})
+                :ctx         (.getContext canvas "2d")
+                :show-about  true})
               (js/setTimeout start! 500))))
           (aset "src" data)))
       (swap! app-state assoc :media-error? true)))))
+
+
+(defn modal [{:keys [stream media-error? show-about] :as app}]
+  (apply dom/div #js {
+    :className (str "modal" (when (or (not stream) media-error? show-about) " active"))}
+    (dom/h1 nil "Cellf")
+    (cond
+      media-error?
+        (dom/p nil
+          "Sorry, Cellf doesn't work without camera access."
+          (dom/button #js {:onClick get-camera!} "try again"))
+
+      (not stream)
+        (dom/p nil
+          (str
+            "Cellf is an interactive experiment that puts a twist on the classic "
+            "sliding puzzle game. Click OK to prompt for camera access.")
+          (dom/button #js {:onClick get-camera!} "ok"))
+
+      show-about
+        [
+          (dom/p nil
+            (str
+              "Simply click a square next to the empty space to move it. "
+              "When you shuffle them into the correct order, you win."))
+          (dom/p nil
+            (str
+              "You can also export a replay of your moves to an animated gif. "
+              "Cellf is ")
+            (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
+            ". For more experiments like this, visit "
+            (dom/a #js {:href "http://oxism.com"} "oxism.com")
+            \.
+            (dom/button #js {:onClick #(om/update! app [:show-about] false)} "got it"))])))
 
 
 (om/root
@@ -249,6 +284,7 @@
       (render [_]
         (let [move-count (count moves)]
           (dom/div nil
+            (modal app)
             (dom/div #js {:id "sidebar" :style #js {:width capture-size}}
               (dom/h1 nil "cellf")
               (dom/p nil "find yourself.")
