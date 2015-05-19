@@ -218,48 +218,55 @@
                 :vid-offset  (* 100 (/ (max 1 (.abs js/Math (- vw vh))) (max 1 (* vw 2))))
                 :canvas-node canvas
                 :ctx         (.getContext canvas "2d")
-                :show-about  true})
+                :show-about?  true})
               (js/setTimeout start! 500))))
           (aset "src" data)))
       (swap! app-state assoc :media-error? true)))))
 
 
-(defn modal [{:keys [stream media-error? show-about] :as app}]
-  (apply dom/div #js {
-    :className (str "modal" (when (or (not stream) media-error? show-about) " active"))}
-    (dom/h1 nil "Cellf")
-    (cond
-      media-error?
-        (dom/p nil
-          "Sorry, Cellf doesn't work without camera access."
-          (dom/button #js {:onClick get-camera!} "try again"))
+(defn modal [{:keys [stream media-error? show-about? cells win-state grid-size] :as app}]
+  (let [winner?    (= cells win-state)
+        no-stream? (not stream)]
+    (dom/div #js {
+      :className (str "modal" (when (or no-stream? media-error? show-about? winner?) " active"))}
+      (dom/h1 nil "Cellf")
+      (cond
+        media-error?
+          (dom/p nil
+            "Sorry, Cellf doesn't work without camera access."
+            (dom/button #js {:onClick get-camera!} "try again"))
 
-      (not stream)
-        (dom/p nil
-          (str
-            "Cellf is an interactive experiment that puts a twist on the classic "
-            "sliding puzzle game. Click OK to prompt for camera access.")
-          (dom/button #js {:onClick get-camera!} "ok"))
-
-      show-about
-        [
+        no-stream?
           (dom/p nil
             (str
-              "Simply click a square next to the empty space to move it. "
-              "When you shuffle them into the correct order, you win."))
+              "Cellf is an interactive experiment that puts a twist on the classic "
+              "sliding puzzle game. Click OK to prompt for camera access.")
+            (dom/button #js {:onClick get-camera!} "ok"))
+
+        winner?
           (dom/p nil
-            (str
-              "You can also export a replay of your moves to an animated gif. "
-              "Cellf is ")
-            (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
-            ". For more experiments like this, visit "
-            (dom/a #js {:href "http://oxism.com"} "oxism.com")
-            \.
-            (dom/button #js {:onClick #(om/update! app [:show-about] false)} "got it"))])))
+            "You win!"
+            (dom/button #js {:onClick #(set-grid-size! app grid-size)} "new game"))
+
+        show-about?
+          (dom/div nil
+            (dom/p nil
+              (str
+                "Simply click a square next to the empty space to move it. "
+                "When you shuffle them into the correct order, you win."))
+            (dom/p nil
+              (str
+                "You can also export a replay of your moves to an animated gif. "
+                "Cellf is ")
+              (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
+              ". For more experiments like this, visit "
+              (dom/a #js {:href "http://oxism.com"} "oxism.com")
+              \.
+              (dom/button #js {:onClick #(om/update! app [:show-about?] false)} "got it")))))))
 
 
 (om/root
-  (fn [{:keys [stream cells win-state moves tick tick-ms grid-size show-nums] :as app} owner]
+  (fn [{:keys [stream moves tick tick-ms grid-size show-nums] :as app} owner]
     (reify
       om/IDidMount
       (did-mount [_]
@@ -295,9 +302,6 @@
 
               (when stream
                 (dom/div nil
-                  (when (= cells win-state)
-                    (dom/h1 nil "You win!"))
-
                   (dom/label
                     #js {:className "move-count"}
                     (str (inc tick) \/ move-count))
