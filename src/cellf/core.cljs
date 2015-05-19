@@ -145,8 +145,8 @@
 
 
 (defn set-grid-size! [app size]
-  (when (and (integer? size) (> size 1) (< size 10))
-    (new-game! app size (:tick-ms @app))))
+  {:pre [(integer? size) (> size 1) (< size 10)]}
+  (new-game! app size (:tick-ms @app)))
 
 (defn set-tick-ms! [app ms]
   (om/update! app [:tick-ms] ms))
