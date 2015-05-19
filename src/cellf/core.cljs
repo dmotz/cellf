@@ -224,13 +224,13 @@
 
 
 (om/root
-  (fn [{:keys [stream cells win-state moves tick tick-ms grid-size show-nums] :as app} _]
+  (fn [{:keys [stream cells win-state moves tick tick-ms grid-size show-nums] :as app} owner]
     (reify
       om/IDidMount
       (did-mount [_]
         (def playback-ctx
           (->
-            (.getElementById js/document "playback-canvas")
+            (om/get-node owner "playback")
             (.getContext "2d")))
 
         (defonce resize-loop
@@ -253,7 +253,7 @@
               (dom/h1 nil "cellf")
               (dom/p nil "find yourself.")
               (dom/canvas #js {
-                :id     "playback-canvas"
+                :ref    "playback"
                 :width  capture-size
                 :height (* capture-size 2)})
 
