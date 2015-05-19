@@ -289,50 +289,49 @@
 
       om/IRender
       (render [_]
-        (let [move-count (count moves)]
-          (dom/div nil
-            (modal app)
-            (dom/div #js {:id "sidebar" :style #js {:width capture-size}}
-              (dom/h1 nil "cellf")
-              (dom/p nil "find yourself.")
-              (dom/canvas #js {
-                :ref    "playback"
-                :width  capture-size
-                :height (* capture-size 2)})
+        (dom/div nil
+          (modal app)
+          (dom/div #js {:id "sidebar" :style #js {:width capture-size}}
+            (dom/h1 nil "cellf")
+            (dom/p nil "find yourself.")
+            (dom/canvas #js {
+              :ref    "playback"
+              :width  capture-size
+              :height (* capture-size 2)})
 
-              (when stream
-                (dom/div nil
-                  (dom/label
-                    #js {:className "move-count"}
-                    (str (inc tick) \/ move-count))
+            (when stream
+              (dom/div nil
+                (dom/label
+                  #js {:className "move-count"}
+                  (str (inc tick) \/ (count moves)))
 
-                  (dom/label #js {:htmlFor "show-nums"} "show numbers?")
-                  (dom/input #js {
-                    :id       "show-nums"
-                    :type     "checkbox"
-                    :checked  show-nums
-                    :onChange #(om/update! app :show-nums (not show-nums))})
+                (dom/label #js {:htmlFor "show-nums"} "show numbers?")
+                (dom/input #js {
+                  :id       "show-nums"
+                  :type     "checkbox"
+                  :checked  show-nums
+                  :onChange #(om/update! app :show-nums (not show-nums))})
 
-                  (dom/label nil
-                    (str "grid-size (" grid-size \× grid-size ")")
-                    (dom/em nil "(starts new game)"))
-                  (dom/input #js {
-                    :type     "range"
-                    :value    grid-size
-                    :min      "2"
-                    :max      "9"
-                    :step     "1"
-                    :onChange #(set-grid-size! app (js/parseInt (.. % -target -value)))})
+                (dom/label nil
+                  (str "grid-size (" grid-size \× grid-size ")")
+                  (dom/em nil "(starts new game)"))
+                (dom/input #js {
+                  :type     "range"
+                  :value    grid-size
+                  :min      "2"
+                  :max      "9"
+                  :step     "1"
+                  :onChange #(set-grid-size! app (js/parseInt (.. % -target -value)))})
 
-                  (dom/label nil "playback speed")
-                  (dom/input #js {
-                    :type     "range"
-                    :value    (- tick-ms)
-                    :min      "-1000"
-                    :max      "-30"
-                    :step     "10"
-                    :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))}))))
+                (dom/label nil "playback speed")
+                (dom/input #js {
+                  :type     "range"
+                  :value    (- tick-ms)
+                  :min      "-1000"
+                  :max      "-30"
+                  :step     "10"
+                  :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))}))))
 
-            (when stream (om/build grid app)))))))
+          (when stream (om/build grid app))))))
   app-state
   {:target (.getElementById js/document "app")})
