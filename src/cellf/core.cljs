@@ -3,7 +3,7 @@
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [<! >! take! put! chan timeout]]
             [cellf.media :as media])
-  (:require-macros [cljs.core.async.macros :refer [go-loop]]))
+  (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (enable-console-print!)
 
@@ -224,6 +224,15 @@
       (swap! app-state assoc :media-error? true)))))
 
 
+(defn make-gif [imgs ms]
+  (let [gif (js/GIF. #js {:workerScript "/js/gif.worker.js"})]
+    (go
+      (doseq [frame imgs]
+        (.addFrame gif (<! frame) #js {:delay ms}))
+      (.on gif "finished" #(js/open (.createObjectURL js/URL %)))
+      (.render gif))))
+
+
 (defn modal [{:keys [stream media-error? show-about? cells win-state grid-size] :as app}]
   (let [winner?    (= cells win-state)
         no-stream? (not stream)]
@@ -301,6 +310,8 @@
 
             (when stream
               (dom/div nil
+                (dom/button #js {:onClick #(make-gif @img-cache tick-ms)} "make gif")
+
                 (dom/label
                   #js {:className "move-count"}
                   (str (inc tick) \/ (count moves)))
