@@ -20,7 +20,7 @@
     :builds [{:id "dev"
               :source-paths ["src"]
 
-              :figwheel { :on-jsload "cellf.core/on-js-reload" }
+              :figwheel {}
 
               :compiler {:main cellf.core
                          :asset-path "js/compiled/out"
