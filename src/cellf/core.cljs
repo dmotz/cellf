@@ -157,15 +157,16 @@
 (declare playback-ctx)
 
 (defn paint-canvas! [{:keys [moves grid-size]} tick]
-  (take! (@img-cache tick) (fn [img]
-    (let [s (/ capture-size grid-size)]
+  (go
+    (let [img (<! (@img-cache tick))
+          s   (/ capture-size grid-size)]
       (.clearRect playback-ctx 0 0 capture-size capture-size)
       (doseq [[idx pos] (:cells (moves tick))]
         (if-not (= idx :empty)
           (let [[x1 y1] (get-cell-xy idx grid-size)
                 [x2 y2] (get-cell-xy pos grid-size)]
             (.drawImage playback-ctx img (* x1 s) (* y1 s) s s (* x2 s) (* y2 s) s s))))
-      (.drawImage playback-ctx img 0 capture-size)))))
+      (.drawImage playback-ctx img 0 capture-size))))
 
 (defonce app-state (atom {}))
 
@@ -188,7 +189,7 @@
             move-count (count moves)
             tick       (if (>= tick move-count) 0 tick)]
         (swap! app-state assoc :tick tick)
-        (paint-canvas! app tick)
+        (<! (paint-canvas! app tick))
         (if (or (zero? move-count) (= tick (dec move-count)))
           (recur 0)
           (recur (inc tick)))))))
