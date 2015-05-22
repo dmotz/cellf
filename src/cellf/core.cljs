@@ -225,11 +225,13 @@
       (swap! app-state assoc :media-error? true)))))
 
 
-(defn make-gif [imgs ms]
-  (let [gif (js/GIF. #js {:workerScript "/js/gif.worker.js"})]
+(defn make-gif [app ms]
+  (let [gif    (js/GIF. #js {:workerScript "/js/gif.worker.js" :quality 1})
+        canvas (.-canvas playback-ctx)]
     (go
-      (doseq [frame imgs]
-        (.addFrame gif (<! frame) #js {:delay ms}))
+      (dotimes [i (count (:moves app))]
+        (<! (paint-canvas! app i))
+        (.addFrame gif canvas #js {:delay ms}))
       (.on gif "finished" #(js/open (.createObjectURL js/URL %)))
       (.render gif))))
 
@@ -311,7 +313,7 @@
 
             (when stream
               (dom/div nil
-                (dom/button #js {:onClick #(make-gif @img-cache tick-ms)} "make gif")
+                (dom/button #js {:onClick #(make-gif app tick-ms)} "make gif")
 
                 (dom/label
                   #js {:className "move-count"}
