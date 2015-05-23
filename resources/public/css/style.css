@@ -16,6 +16,22 @@ body {
   margin: 0;
 }
 
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  z-index: 1999;
+  background-color: #ccc;
+  padding: 4rem;
+  font-size: 2rem;
+  display: none;
+}
+
+.modal.active {
+  display: block;
+}
+
 #sidebar {
   background-color: rgba(255, 255, 255, .5);
   background-color: #fff;
@@ -67,7 +83,7 @@ body {
   transition: transform .2s;
   overflow: hidden;
   text-align: center;
-  font-size: 24
+  font-size: 24;
 }
 
 .cell video {
