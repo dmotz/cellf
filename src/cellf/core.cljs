@@ -33,10 +33,11 @@
         img-el   (js/Image.)
         pc       (promise-chan)]
     (swap! img-cache conj pc)
-    (aset img-el "src" img-data)
-    (aset img-el "onload" (fn []
-      (js-delete img-el "onload")
-      (put! pc img-el)))
+    (doto img-el
+      (aset "src" img-data)
+      (aset "onload" (fn []
+        (js-delete img-el "onload")
+        (put! pc img-el))))
     {:cells cells :image img-data}))
 
 (defn make-cell-list [size]
