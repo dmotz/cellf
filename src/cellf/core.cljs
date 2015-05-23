@@ -139,7 +139,7 @@
   (om/component
     (apply dom/div #js {
       :className (str "grid" (when show-nums " show-nums"))
-      :style #js {:width grid-px :height grid-px}}
+      :style     #js {:width grid-px :height grid-px}}
 
       (map (partial cell app) cells))))
 
@@ -149,7 +149,7 @@
   (new-game! app size (:tick-ms @app)))
 
 (defn set-tick-ms! [app ms]
-  (om/update! app [:tick-ms] ms))
+  (om/update! app :tick-ms ms))
 
 (defn get-max-grid-px []
   (min (- js/innerWidth (* capture-size 1.2)) js/innerHeight))
