@@ -265,6 +265,12 @@
             "You win!"
             (dom/button #js {:onClick #(set-grid-size! app grid-size)} "new game"))
 
+        result-gif
+          (dom/p nil
+            (dom/img #js {:src result-gif})
+            "You can save this gif and share it with the world."
+            (dom/button #js {:onClick #(om/update! app :result-gif nil)} "done"))
+
         show-about?
           (dom/div nil
             (dom/p nil
@@ -279,7 +285,7 @@
               ". For more experiments like this, visit "
               (dom/a #js {:href "http://oxism.com"} "oxism.com")
               \.
-              (dom/button #js {:onClick #(om/update! app [:show-about?] false)} "got it")))))))
+              (dom/button #js {:onClick #(om/update! app :show-about? false)} "got it")))))))
 
 
 (om/root
@@ -294,7 +300,7 @@
 
         (defonce resize-loop
           (let [resize-chan (chan)]
-            (.addEventListener js/window "resize" #(put! resize-chan 0))
+            (.addEventListener js/window "resize" #(put! resize-chan true))
             (go-loop [open true]
               (when open (<! resize-chan))
               (let [throttle (timeout resize-ms)]
