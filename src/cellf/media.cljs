@@ -1,11 +1,10 @@
 (ns cellf.media
-  (:require [cljs.core.async :refer [chan put!]]
-            [clojure.string  :refer [upper-case]]))
+  (:require [cljs.core.async :refer [chan put!]]))
 
 (def prefixes ["webkit" "moz" "ms"])
 
 (defn find-native [obj fn-name]
-  (let [cap-name (str (upper-case (first fn-name)) (apply str (rest fn-name)))]
+  (let [cap-name (str (.toUpperCase (first fn-name)) (apply str (rest fn-name)))]
     (loop [names (cons fn-name (map #(str % cap-name) prefixes))]
       (when (seq names)
         (if-let [f (aget obj (first names))]
