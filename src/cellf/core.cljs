@@ -358,7 +358,9 @@
                   :min      "-1000"
                   :max      "-30"
                   :step     "10"
-                  :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))}))))
+                  :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))})
+
+                (dom/button #js {:onClick #(om/update! app :show-about? true)} "info"))))
 
           (when stream (om/build grid app))))))
   app-state
