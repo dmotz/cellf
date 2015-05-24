@@ -86,7 +86,7 @@
           pct   (/ 100 size)
           [x y] (get-cell-xy i size)]
       #js {
-        :height    (str (* size 100) "%")
+        :height    (str (* size 100) \%)
         :transform (t3d
           (- (+ (/ (* x pct) (:vid-ratio app)) (:vid-offset app)))
           (- (* pct y)))})))
@@ -237,8 +237,8 @@
       (.render gif))))
 
 
-(defn modal [{:keys [stream media-error? show-about? cells win-state grid-size] :as app}]
-  (let [winner?    (= cells win-state)
+(defn modal [{:keys [stream media-error show-about? result-gif cells win-state grid-size] :as app}]
+  (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div #js {
       :className (str "modal" (when (or no-stream? media-error? show-about? winner?) " active"))}
