@@ -256,13 +256,16 @@
         no-stream?
           (dom/p nil
             (str
-              "Cellf is an interactive experiment that puts a twist on the classic "
-              "sliding puzzle game. Click OK to prompt for camera access.")
+              "Cellf is an interactive experiment that reflects the player and their "
+              "surroundings as they play. Click OK to prompt for camera access.")
+            (dom/em nil (str
+              "There is no server or multiplayer component to this: "
+              "your image stays on your device."))
             (dom/button #js {:onClick get-camera!} "ok"))
 
         winner?
           (dom/p nil
-            "You win!"
+            "You win! For more of a challenge, drag the slider to create a bigger grid."
             (dom/button #js {:onClick #(set-grid-size! app grid-size)} "new game"))
 
         result-gif
