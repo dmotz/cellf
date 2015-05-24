@@ -230,10 +230,10 @@
   (let [gif    (js/GIF. #js {:workerScript "/js/gif.worker.js" :quality 1})
         canvas (.-canvas playback-ctx)]
     (go
-      (dotimes [i (count (:moves app))]
-        (<! (paint-canvas! app i))
+      (dotimes [idx (count (:moves app))]
+        (<! (paint-canvas! app idx))
         (.addFrame gif canvas #js {:delay ms}))
-      (.on gif "finished" #(js/open (.createObjectURL js/URL %)))
+      (.on gif "finished" #(om/update! app :result-gif (.createObjectURL js/URL %)))
       (.render gif))))
 
 
