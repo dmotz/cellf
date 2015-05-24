@@ -223,7 +223,7 @@
                 :show-about?  true})
               (js/setTimeout start! 500))))
           (aset "src" data)))
-      (swap! app-state assoc :media-error? true)))))
+      (swap! app-state assoc :media-error data)))))
 
 
 (defn make-gif [app ms]
@@ -241,12 +241,16 @@
   (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div #js {
-      :className (str "modal" (when (or no-stream? media-error? show-about? winner?) " active"))}
+      :className (str "modal" (when (or no-stream? media-error show-about? result-gif winner?) " active"))}
       (dom/h1 nil "Cellf")
       (cond
-        media-error?
+        media-error
           (dom/p nil
-            "Sorry, Cellf doesn't work without camera access."
+            (if (= media-error :denied)
+              "Sorry, Cellf doesn't work without camera access."
+              (str
+                "Sorry, it looks like your device or browser doesn't support camera access. "
+                "Try Cellf using Chrome or Firefox on a device that supports WebRTC."))
             (dom/button #js {:onClick get-camera!} "try again"))
 
         no-stream?
