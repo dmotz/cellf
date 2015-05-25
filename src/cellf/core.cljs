@@ -220,7 +220,7 @@
                 :vid-offset  (* 100 (/ (max 1 (.abs js/Math (- vw vh))) (max 1 (* vw 2))))
                 :canvas-node canvas
                 :ctx         (.getContext canvas "2d")
-                :show-about?  true})
+                :show-about? true})
               (js/setTimeout start! 500))))
           (aset "src" data)))
       (swap! app-state assoc :media-error data)))))
@@ -233,8 +233,9 @@
       (dotimes [idx (count (:moves app))]
         (<! (paint-canvas! app idx))
         (.addFrame gif canvas #js {:delay ms :copy true}))
-      (.on gif "finished" #(om/update! app :result-gif (.createObjectURL js/URL %)))
-      (.render gif))))
+      (doto gif
+        (.on "finished" #(om/update! app :result-gif (.createObjectURL js/URL %)))
+        (.render)))))
 
 
 (defn modal [{:keys [stream media-error show-about? result-gif cells win-state grid-size] :as app}]
