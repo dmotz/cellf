@@ -161,7 +161,7 @@
   (go
     (let [img (<! (@img-cache tick))
           s   (/ capture-size grid-size)]
-      (.clearRect playback-ctx 0 0 capture-size capture-size)
+      (.fillRect playback-ctx 0 0 capture-size capture-size)
       (doseq [[idx pos] (:cells (moves tick))]
         (if-not (= idx :empty)
           (let [[x1 y1] (get-cell-xy idx grid-size)
@@ -296,9 +296,9 @@
       om/IDidMount
       (did-mount [_]
         (def playback-ctx
-          (->
-            (om/get-node owner "playback")
-            (.getContext "2d")))
+          (let [ctx (-> (om/get-node owner "playback") (.getContext "2d"))]
+            (aset ctx "fillStyle" "#fff")
+            ctx))
 
         (defonce resize-loop
           (let [resize-chan (chan)]
