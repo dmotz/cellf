@@ -227,6 +227,7 @@
 
 
 (defn make-gif [app ms]
+  (om/update! app :gif-building? true)
   (let [gif    (js/GIF. #js {:workerScript "/js/gif.worker.js" :quality 1})
         canvas (.-canvas playback-ctx)]
     (go
@@ -234,7 +235,9 @@
         (<! (paint-canvas! app idx))
         (.addFrame gif canvas #js {:delay ms :copy true}))
       (doto gif
-        (.on "finished" #(om/update! app :result-gif (.createObjectURL js/URL %)))
+        (.on "finished" (fn [data]
+          (om/update! app :result-gif (.createObjectURL js/URL data))
+          (om/update! app :gif-building? false)))
         (.render)))))
 
 
