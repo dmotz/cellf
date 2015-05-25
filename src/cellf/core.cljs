@@ -242,10 +242,9 @@
         no-stream? (not stream)]
     (dom/div #js {
       :className (str "modal" (when (or no-stream? media-error show-about? result-gif winner?) " active"))}
-      (dom/h1 nil "Cellf")
       (cond
         media-error
-          (dom/p nil
+          (dom/div nil
             (if (= media-error :denied)
               "Sorry, Cellf doesn't work without camera access."
               (str
@@ -254,7 +253,7 @@
             (dom/button #js {:onClick get-camera!} "try again"))
 
         no-stream?
-          (dom/p nil
+          (dom/div nil
             (str
               "Cellf is an interactive experiment that reflects the player and their "
               "surroundings as they play. Click OK to prompt for camera access.")
@@ -264,12 +263,12 @@
             (dom/button #js {:onClick get-camera!} "ok"))
 
         winner?
-          (dom/p nil
+          (dom/div nil
             "You win! For more of a challenge, drag the slider to create a bigger grid."
             (dom/button #js {:onClick #(set-grid-size! app grid-size)} "new game"))
 
         result-gif
-          (dom/p nil
+          (dom/div nil
             (dom/img #js {:src result-gif})
             "You can save this gif and share it with the world."
             (dom/button #js {:onClick #(om/update! app :result-gif nil)} "done"))
