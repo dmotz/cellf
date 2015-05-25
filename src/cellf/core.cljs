@@ -232,7 +232,7 @@
     (go
       (dotimes [idx (count (:moves app))]
         (<! (paint-canvas! app idx))
-        (.addFrame gif canvas #js {:delay ms}))
+        (.addFrame gif canvas #js {:delay ms :copy true}))
       (.on gif "finished" #(om/update! app :result-gif (.createObjectURL js/URL %)))
       (.render gif))))
 
