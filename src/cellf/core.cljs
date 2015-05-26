@@ -241,7 +241,7 @@
         (.render)))))
 
 
-(defn modal [{:keys [stream media-error show-about? result-gif cells win-state grid-size] :as app}]
+(defn modal [{:keys [stream media-error show-about? result-gif cells win-state grid-size tick-ms gif-building?] :as app}]
   (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div #js {
