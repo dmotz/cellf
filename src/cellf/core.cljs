@@ -245,7 +245,8 @@
   (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div #js {
-      :className (str "modal" (when (or no-stream? media-error show-about? result-gif winner?) " active"))}
+      :className (str "modal"
+        (when (or no-stream? media-error show-about? result-gif winner?) " active"))}
       (cond
         media-error
           (dom/div nil
@@ -320,9 +321,13 @@
       (render [_]
         (dom/div nil
           (modal app)
-          (dom/div #js {:id "sidebar" :style #js {:width capture-size}}
-            (dom/h1 nil "cellf")
-            (dom/p nil "find yourself.")
+          (dom/div #js {
+            :id        "sidebar"
+            :className (when-not stream "hidden")
+            :style     #js {:width capture-size}}
+
+            (dom/h1 nil "Cellf")
+            (dom/h2 nil "find yourself.")
             (dom/canvas #js {
               :ref    "playback"
               :width  capture-size
