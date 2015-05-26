@@ -259,44 +259,54 @@
 
         no-stream?
           (dom/div nil
-            (str
+            (dom/h1 nil "Hi")
+            (dom/p nil (str
               "Cellf is an interactive experiment that reflects the player and their "
-              "surroundings as they play. Click OK to prompt for camera access.")
+              "surroundings as they play. Click OK to prompt for camera access*."))
             (dom/em nil (str
-              "There is no server or multiplayer component to this: "
+              "*There is no server or multiplayer component to this: "
               "your image stays on your device."))
             (dom/button #js {:onClick get-camera!} "ok"))
 
-        winner?
-          (dom/div nil
-            "You win! For more of a challenge, drag the slider to create a bigger grid."
-            (dom/button #js {:onClick #(set-grid-size! app grid-size)} "new game"))
-
         result-gif
           (dom/div nil
+            (dom/h1 nil "Your Cellf")
             (dom/img #js {:src result-gif})
-            "You can save this gif and share it with the world."
+            "Save this gif and share it with the world."
             (dom/button #js {:onClick #(om/update! app :result-gif nil)} "done"))
+
+        winner?
+          (dom/div nil
+            (dom/h1 nil "You win!")
+            "For more of a challenge, drag the slider to create a bigger grid."
+            (apply dom/button
+              (if gif-building?
+                [#js {:className "wait"} "hold on"]
+                [#js {:onClick #(make-gif app tick-ms)} "make gif replay"]))
+            (dom/button #js {:onClick #(set-grid-size! app grid-size)} "new game"))
 
         show-about?
           (dom/div nil
+            (dom/h1 nil "How to play")
             (dom/p nil
               (str
-                "Simply click a square next to the empty space to move it. "
+                "Simply click a cell next to the empty cell to move it. "
                 "When you shuffle them into the correct order, you win."))
             (dom/p nil
               (str
-                "You can also export a replay of your moves to an animated gif. "
-                "Cellf is ")
-              (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
-              ". For more experiments like this, visit "
+                "You can also export a replay of your moves to an animated gif by "
+                "clicking the 'make gif' button."))
+
+            (dom/p (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
+              "For more experiments like this, visit "
               (dom/a #js {:href "http://oxism.com"} "oxism.com")
-              \.
-              (dom/button #js {:onClick #(om/update! app :show-about? false)} "got it")))))))
+              \.)
+
+            (dom/button #js {:onClick #(om/update! app :show-about? false)} "got it"))))))
 
 
 (om/root
-  (fn [{:keys [stream moves tick tick-ms grid-size show-nums] :as app} owner]
+  (fn [{:keys [stream moves tick tick-ms grid-size show-nums gif-building?] :as app} owner]
     (reify
       om/IDidMount
       (did-mount [_]
@@ -335,8 +345,6 @@
 
             (when stream
               (dom/div nil
-                (dom/button #js {:onClick #(make-gif app tick-ms)} "make gif")
-
                 (dom/label
                   #js {:className "move-count"}
                   (str (inc tick) \/ (count moves)))
@@ -368,7 +376,12 @@
                   :step     "10"
                   :onChange #(set-tick-ms! app (- (js/parseInt (.. % -target -value))))})
 
-                (dom/button #js {:onClick #(om/update! app :show-about? true)} "info"))))
+                (apply dom/button
+                  (if gif-building?
+                    [#js {:className "wait"} "hold on"]
+                    [#js {:onClick #(make-gif app tick-ms)} "make gif"]))
+
+                (dom/button #js {:onClick #(om/update! app :show-about? true)} "help"))))
 
           (when stream (om/build grid app))))))
   app-state
