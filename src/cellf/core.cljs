@@ -297,7 +297,8 @@
                 "You can also export a replay of your moves to an animated gif by "
                 "clicking the 'make gif' button."))
 
-            (dom/p (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
+            (dom/p nil
+              (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
               "For more experiments like this, visit "
               (dom/a #js {:href "http://oxism.com"} "oxism.com")
               \.)
