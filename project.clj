@@ -32,7 +32,7 @@
                          :cache-analysis true }}
              {:id "min"
               :source-paths ["src"]
-              :compiler {:output-to "resources/public/js/compiled/cellf.js"
+              :compiler {:output-to "resources/public/js/cellf.min.js"
                          :main cellf.core
                          :optimizations :advanced
                          :pretty-print false}}]}
