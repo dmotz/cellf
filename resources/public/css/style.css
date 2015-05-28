@@ -16,20 +16,97 @@ body {
   margin: 0;
 }
 
+::-moz-selection {
+  background: #444;
+  color: #fff;
+  text-shadow: none
+}
+
+::selection{
+  background: #444;
+  color: #fff;
+  text-shadow: none
+}
+
+a, a:visited {
+  color: #fff;
+  text-decoration: none;
+  background-color: #aaa;
+  outline: .5rem solid #aaa;
+}
+
+button {
+  background-color: #444;
+  border: none;
+  font-family: Cousine, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #fff;
+  font-size: 2rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: blue;
+}
+
+button:focus {
+  outline: none;
+}
+
+button.wait {
+  cursor: wait;
+  opacity: .3;
+}
+
+button.wait:hover {
+  background-color: #444;
+}
+
 .modal {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate3d(-50%, -50%, 0);
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, .8);
   z-index: 1999;
-  background-color: #ccc;
-  padding: 4rem;
-  font-size: 2rem;
   display: none;
 }
 
 .modal.active {
   display: block;
+}
+
+.modal > div {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  background-color: #777;
+  padding: 4rem;
+  font-size: 2rem;
+  line-height: 1.5;
+  max-width: 60%;
+  box-shadow: 1rem 1rem 0 0 #0000ff, 2rem 2rem 0 0 #FF5859;
+  max-height: 90%;
+  overflow: auto;
+}
+
+.modal img, .modal button {
+  display: block;
+  margin: 0 auto;
+}
+
+.modal button {
+  margin-top: 3rem;
+}
+
+.modal img {
+  margin-bottom: 3rem;
+}
+
+.modal h1 {
+  font-size: 3rem;
 }
 
 #sidebar {
@@ -42,14 +119,33 @@ body {
   right: 0;
   box-sizing: content-box;
   z-index: 100;
+  box-shadow: -1rem 1rem 0 0 #0000ff, -2rem 2rem 0 0 #FF5859;
+}
+
+#sidebar.hidden {
+  visibility: hidden;
+}
+
+#sidebar h1 {
+  font-size: 3rem;
+  line-height: 1;
+  margin: .5rem 0;
+  text-transform: lowercase;
+  font-weight: 100;
+}
+
+#sidebar h2 {
+  font-weight: 100;
 }
 
 #sidebar label {
   display: block;
+  font-size: 1.2rem;
 }
 
 #sidebar label em {
   float: right;
+  opacity: .7;
 }
 
 .move-count {
@@ -57,10 +153,18 @@ body {
 }
 
 #sidebar input {
-  width: 100%;
   display: block;
   margin: 1rem 0;
   margin-bottom: 2rem;
+}
+
+#sidebar input[type='checkbox'] {
+  width: 2rem;
+  height: 2rem;
+}
+
+#sidebar button:last-of-type {
+  float: right;
 }
 
 .heads-up {
@@ -80,7 +184,7 @@ body {
 .cell {
   position: absolute;
   display: inline-block;
-  transition: transform .2s;
+  transition: transform .2s, opacity .2s;
   overflow: hidden;
   text-align: center;
   font-size: 24;
@@ -116,6 +220,7 @@ input[type='range'] {
 
 input[type='range']:focus {
   outline: none;
+  border: 0;
 }
 
 input[type='range']::-webkit-slider-thumb {
@@ -125,7 +230,7 @@ input[type='range']::-webkit-slider-thumb {
   border-radius: 100%;
   border: 1px solid #bbb;
   background: #fff;
-  cursor: pointer;
+  cursor: ew-resize;
   margin-top: -8px;
 }
 
@@ -135,7 +240,7 @@ input[type='range']::-moz-range-thumb {
   border-radius: 100%;
   border: 1px solid #bbb;
   background: #fff;
-  cursor: pointer;
+  cursor: ew-resize;
   margin-top: -8px;
 }
 
@@ -145,7 +250,7 @@ input[type='range']::-ms-thumb {
   border-radius: 100%;
   border: 1px solid #bbb;
   background: #fff;
-  cursor: pointer;
+  cursor: ew-resize;
   margin-top: -8px;
 }
 
@@ -161,6 +266,7 @@ input[type='range']::-moz-range-track {
   height: 1px;
   cursor: pointer;
   background: #bbb;
+  border: 0;
 }
 
 input[type='range']::-ms-track {
