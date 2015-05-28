@@ -35,6 +35,7 @@
               :compiler {:output-to "resources/public/js/cellf.min.js"
                          :main cellf.core
                          :optimizations :advanced
-                         :pretty-print false}}]}
+                         :pretty-print false
+                         :externs ["externs/gif.ext.js"]}}]}
 
   :figwheel {:css-dirs ["resources/public/css"]})
