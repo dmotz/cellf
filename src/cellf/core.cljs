@@ -260,20 +260,22 @@
         no-stream?
           (dom/div nil
             (dom/h1 nil "Hi")
-            (dom/p nil (str
-              "Cellf is an interactive experiment that reflects the player and their "
-              "surroundings as they play. Click OK to prompt for camera access*."))
-            (dom/em nil (str
-              "*There is no server or multiplayer component to this: "
-              "your image stays on your device."))
-            (dom/button #js {:onClick get-camera!} "ok"))
+            (dom/p nil
+              (str
+                "Cellf is an interactive experiment that reflects the player and their "
+                "surroundings as they play. When you click OK, Cellf will ask for camera access."))
+            (dom/p nil
+              (str
+                "There's no server or multiplayer component to this: "
+                "your image stays on your device."))
+            (dom/button #js {:onClick get-camera!} "✔ ok"))
 
         result-gif
           (dom/div nil
             (dom/h1 nil "Your Cellf")
             (dom/img #js {:src result-gif})
-            "Save this gif and share it with the world."
-            (dom/button #js {:onClick #(om/update! app :result-gif nil)} "done"))
+            "Save this gif and share your Cellf with the world."
+            (dom/button #js {:onClick #(om/update! app :result-gif nil)} "✔ done"))
 
         winner?
           (dom/div nil
@@ -297,13 +299,16 @@
                 "You can also export a replay of your moves to an animated gif by "
                 "clicking the 'make gif' button."))
 
+            (dom/h1 nil "About Cellf")
             (dom/p nil
+              "Cellf was created by Dan Motzenbecker and is "
               (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
+              " on Github. "
               "For more experiments like this, visit "
               (dom/a #js {:href "http://oxism.com"} "oxism.com")
               \.)
 
-            (dom/button #js {:onClick #(om/update! app :show-about? false)} "got it"))))))
+            (dom/button #js {:onClick #(om/update! app :show-about? false)} "✔ got it"))))))
 
 
 (om/root
@@ -337,8 +342,8 @@
             :className (when-not stream "hidden")
             :style     #js {:width capture-size}}
 
-            (dom/h1 nil "Cellf")
-            (dom/h2 nil "find yourself.")
+            (dom/h1 nil "cellf")
+            (dom/h2 nil "find yourself")
             (dom/canvas #js {
               :ref    "playback"
               :width  capture-size
@@ -358,7 +363,7 @@
                   :onChange #(om/update! app :show-nums (not show-nums))})
 
                 (dom/label nil
-                  (str "grid-size (" grid-size \× grid-size ")")
+                  (str "grid size (" grid-size \× grid-size ")")
                   (dom/em nil "(starts new game)"))
                 (dom/input #js {
                   :type     "range"
