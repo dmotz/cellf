@@ -29,10 +29,16 @@ body {
 }
 
 a, a:visited {
-  color: #fff;
+  color: #333;
   text-decoration: none;
-  background-color: #aaa;
-  outline: .5rem solid #aaa;
+  background-color: rgba(255, 255, 255, .8);
+  outline: .2rem solid rgba(255, 255, 255, .8);
+}
+
+a:hover {
+  background-color: #FF5859;
+  outline-color: #FF5859;
+  color: #fff;
 }
 
 button {
@@ -43,10 +49,12 @@ button {
   font-size: 2rem;
   padding: 1rem 2rem;
   cursor: pointer;
+  transition: transform .2s;
 }
 
 button:hover {
-  background-color: blue;
+  background-color: #0000ff;
+  transform: translateY(-.2rem);
 }
 
 button:focus {
@@ -82,7 +90,7 @@ button.wait:hover {
   top: 50%;
   left: 50%;
   transform: translate3d(-50%, -50%, 0);
-  background-color: #777;
+  background-color: #333;
   padding: 4rem;
   font-size: 2rem;
   line-height: 1.5;
@@ -99,6 +107,18 @@ button.wait:hover {
 
 .modal button {
   margin-top: 3rem;
+  background-color: #fff;
+  color: #333;
+}
+
+.modal button:hover {
+  background-color: #0000ff;
+  color: #fff;
+}
+
+.modal button.wait:hover {
+  background-color: #fff;
+  color: #333;
 }
 
 .modal img {
@@ -130,12 +150,15 @@ button.wait:hover {
   font-size: 3rem;
   line-height: 1;
   margin: .5rem 0;
-  text-transform: lowercase;
-  font-weight: 100;
+/*  text-transform: uppercase;
+*/  font-weight: 100;
+  letter-spacing: 2rem;
 }
 
 #sidebar h2 {
   font-weight: 100;
+  font-size: 1.3rem;
+  opacity: .8;
 }
 
 #sidebar label {
