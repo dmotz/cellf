@@ -133,7 +133,7 @@ button.wait:hover {
   background-color: rgba(255, 255, 255, .5);
   background-color: #fff;
   color: #555;
-  padding: 10px;
+  padding: 1rem;
   position: absolute;
   top: 0;
   right: 0;
@@ -150,8 +150,7 @@ button.wait:hover {
   font-size: 3rem;
   line-height: 1;
   margin: .5rem 0;
-/*  text-transform: uppercase;
-*/  font-weight: 100;
+  font-weight: 100;
   letter-spacing: 2rem;
 }
 
@@ -190,13 +189,7 @@ button.wait:hover {
   float: right;
 }
 
-.heads-up {
-  font-size: 90px;
-  font-weight: bold;
-}
-
 .grid {
-  width: 600px;
   position: relative;
 }
 
