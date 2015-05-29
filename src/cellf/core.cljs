@@ -11,6 +11,7 @@
 (def capture-size 250)
 (def tick-ms      150)
 (def resize-ms    200)
+(def source-url   "https://github.com/dmotz/cellf")
 
 (defonce img-cache (atom []))
 
@@ -250,12 +251,14 @@
       (cond
         media-error
           (dom/div nil
+            (dom/h1 nil "!!!")
             (if (= media-error :denied)
               "Sorry, Cellf doesn't work without camera access."
               (str
                 "Sorry, it looks like your device or browser doesn't support camera access. "
                 "Try Cellf using Chrome or Firefox on a device that supports WebRTC."))
-            (dom/button #js {:onClick get-camera!} "try again"))
+            (dom/button #js {:onClick get-camera!} "try again")
+            (dom/button #js {:onClick #(js/open source-url)} "view cellf source"))
 
         no-stream?
           (dom/div nil
@@ -302,7 +305,7 @@
             (dom/h1 nil "About Cellf")
             (dom/p nil
               "Cellf was created by Dan Motzenbecker and is "
-              (dom/a #js {:href "https://github.com/dmotz/cellf"} "open source")
+              (dom/a #js {:href source-url} "open source")
               " on Github. "
               "For more experiments like this, visit "
               (dom/a #js {:href "http://oxism.com"} "oxism.com")
