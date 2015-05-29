@@ -12,6 +12,7 @@
 (def tick-ms      150)
 (def resize-ms    200)
 (def source-url   "https://github.com/dmotz/cellf")
+(def home-url     "http://oxism.com")
 
 (defonce img-cache (atom []))
 
@@ -308,7 +309,7 @@
               (dom/a #js {:href source-url} "open source")
               " on Github. "
               "For more experiments like this, visit "
-              (dom/a #js {:href "http://oxism.com"} "oxism.com")
+              (dom/a #js {:href home-url} "oxism.com")
               \.)
 
             (dom/button #js {:onClick #(om/update! app :show-about? false)} "✔ got it"))))))
@@ -390,7 +391,13 @@
                     [#js {:className "wait"} "hold on"]
                     [#js {:onClick #(make-gif app tick-ms)} "make gif"]))
 
-                (dom/button #js {:onClick #(om/update! app :show-about? true)} "help"))))
+                (dom/button #js {:onClick #(om/update! app :show-about? true)} "help")
+
+
+                (dom/p nil
+                  (dom/a #js {:href source-url :target "_blank"} "source")
+                  (dom/span nil \/)
+                  (dom/a #js {:href home-url :target "_blank"} "oxism")))))
 
           (when stream (om/build grid app))))))
   app-state

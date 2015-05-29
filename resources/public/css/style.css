@@ -190,6 +190,17 @@ button.wait:hover {
   float: right;
 }
 
+#sidebar p {
+  float: right;
+  margin-top: 1rem;
+  margin-bottom: 0;
+  font-size: 1.2rem;
+}
+
+#sidebar p span {
+  margin: 0 1rem;
+}
+
 .grid {
   position: relative;
 }
