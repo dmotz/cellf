@@ -19,11 +19,9 @@
       (if-let [native-gum (find-native js/navigator "getUserMedia")]
         (native-gum
           (clj->js opts)
-          (fn [stream]
-            (put! c {
-              :status :success
-              :data   (.createObjectURL js/URL stream)}))
-          (fn [_]
-            (put! c {:status :error :data :denied})))
+          #(put! c {
+            :status :success
+            :data   (.createObjectURL js/URL %)})
+          #(put! c {:status :error :data :denied}))
         (put! c {:status :error :data :unsupported}))
       c)))
