@@ -231,7 +231,7 @@
 
 (defn make-gif [app ms]
   (om/update! app :gif-building? true)
-  (let [gif    (js/GIF. #js {:workerScript "/js/gif.worker.js" :quality 1})
+  (let [gif    (js/GIF. #js {:workerScript "js/gif.worker.js" :quality 1})
         canvas (.-canvas playback-ctx)]
     (go
       (dotimes [idx (count (:moves app))]
