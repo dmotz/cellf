@@ -36,6 +36,6 @@
                          :main cellf.core
                          :optimizations :advanced
                          :pretty-print false
-                         :externs ["externs/gif.ext.js"]}}]}
+                         :externs ["resources/externs/gif.ext.js"]}}]}
 
   :figwheel {:css-dirs ["resources/public/css"]})
