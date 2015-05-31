@@ -106,6 +106,10 @@ button.wait:hover {
   margin: 0 auto;
 }
 
+.modal .logo {
+  width: 40%;
+}
+
 .modal button {
   margin-top: 3rem;
   background-color: #fff;
@@ -145,6 +149,10 @@ button.wait:hover {
 
 #sidebar.hidden {
   visibility: hidden;
+}
+
+#sidebar img {
+  width: 65%;
 }
 
 #sidebar h1 {

@@ -348,7 +348,7 @@
             :className (when-not stream "hidden")
             :style     #js {:width capture-size}}
 
-            (dom/h1 nil "cellf")
+            (dom/img #js {:src "/img/cellf.svg" :alt "Cellf"})
             (dom/h2 nil "find yourself")
             (dom/canvas #js {
               :ref    "playback"
