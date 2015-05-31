@@ -268,8 +268,8 @@
             (dom/h1 nil "Hi")
             (dom/p nil
               (str
-                "Cellf is an interactive experiment that reflects the player and their "
-                "surroundings as they play. When you click OK, Cellf will ask for camera access."))
+                "Cellf is an interactive experiment that reflects you and your "
+                "surroundings as you play. When you click OK, Cellf will ask for camera access."))
             (dom/p nil
               (str
                 "There's no server or multiplayer component to this: "
