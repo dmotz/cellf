@@ -264,6 +264,7 @@
 
         no-stream?
           (dom/div nil
+            (dom/img #js {:src "/img/cellf-white.svg" :className "logo"})
             (dom/h1 nil "Hi")
             (dom/p nil
               (str
