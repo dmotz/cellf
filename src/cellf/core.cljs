@@ -264,7 +264,7 @@
 
         no-stream?
           (dom/div nil
-            (dom/img #js {:src "/img/cellf-white.svg" :className "logo"})
+            (dom/img #js {:src "img/cellf-white.svg" :className "logo"})
             (dom/h1 nil "Hi")
             (dom/p nil
               (str
@@ -348,7 +348,7 @@
             :className (when-not stream "hidden")
             :style     #js {:width capture-size}}
 
-            (dom/img #js {:src "/img/cellf.svg" :alt "Cellf"})
+            (dom/img #js {:src "img/cellf.svg" :alt "Cellf"})
             (dom/h2 nil "find yourself")
             (dom/canvas #js {
               :ref    "playback"
