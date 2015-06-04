@@ -41,6 +41,11 @@ a:hover {
   color: #fff;
 }
 
+a.download, a.download:hover {
+  background-color: transparent;
+  outline: none;
+}
+
 button {
   background-color: #444;
   border: none;
