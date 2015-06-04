@@ -279,8 +279,9 @@
         result-gif
           (dom/div nil
             (dom/h1 nil "Your Cellf")
-            (dom/img #js {:src result-gif})
-            "Save this gif and share your Cellf with the world."
+            (dom/a #js {:href result-gif :download "cellf.gif" :className "download"}
+              (dom/img #js {:src result-gif}))
+            "Click this gif to save it. Share your Cellf with the world."
             (dom/button #js {:onClick #(om/update! app :result-gif nil)} "✔ done"))
 
         winner?
