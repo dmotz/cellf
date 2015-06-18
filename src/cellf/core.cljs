@@ -42,12 +42,30 @@
         (put! pc img-el))))
     {:cells cells :image img-data}))
 
+(defn order [grid]
+  (map first (sort-by second grid)))
+
+(defn inversions [grid size]
+  (let [cells (order grid)]
+    (reduce +
+      (map count
+        (map (fn [n] (filter #(< % (nth cells n)) (drop n cells)))
+             (range (count grid)))))))
+
+(defn blank-at-row [grid size]
+  (Math.floor (/ (get grid :empty) size)))
+
+(defn solvable? [grid size]
+  (or
+    (and (odd? size) (even? (inversions grid size)))
+    (and (even? size) (= (even? (inversions grid size)) (odd? (blank-at-row grid size))))))
+
 (defn make-cell-list [size]
   (conj (vec (range (dec (sq size)))) :empty))
 
 (defn make-cells [size win-state]
   (let [shuffled (zipmap (make-cell-list size) (shuffle (range (sq size))))]
-    (if (= shuffled win-state) (recur size win-state) shuffled)))
+    (if (or (= shuffled win-state) (not (solvable? shuffled size))) (recur size win-state) shuffled)))
 
 (defn make-win-state [size]
   (zipmap (make-cell-list size) (range (sq size))))
