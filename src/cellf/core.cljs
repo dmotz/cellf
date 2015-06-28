@@ -62,11 +62,12 @@
 (defn blank-at-row [grid size]
   (Math.floor (/ (:empty grid) size)))
 
-(defn solvable? [grid size]
-  (let [even-inversions? (even? (inversions grid))]
-    (or
-      (and (odd? size) even-inversions?)
-      (and (even? size) (= even-inversions? (odd? (blank-at-row grid size)))))))
+(def solvable?
+  (memoize (fn [grid size]
+    (let [even-inversions? (even? (inversions grid))]
+      (or
+        (and (odd? size) even-inversions?)
+        (and (even? size) (= even-inversions? (odd? (blank-at-row grid size)))))))))
 
 (defn make-cell-list [size]
   (conj (vec (range (dec (sq size)))) :empty))
