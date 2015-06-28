@@ -45,9 +45,9 @@
 
       :test {
         :source-paths ["src" "test"]
+        :notify-command ["phantomjs" "resources/test/test.js" "resources/test/test.html"]
         :compiler {
           :output-to "resources/test/compiled.js"
-          :output-dir "resources/test"
           :optimizations :simple
           :pretty-print true}}}
 
