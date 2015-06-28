@@ -12,30 +12,46 @@
   :plugins [[lein-cljsbuild "1.0.5"]
             [lein-figwheel "0.2.9"]]
 
-  :source-paths ["src"]
+  :source-paths ["src" "test"]
 
-  :clean-targets ^{:protect false} ["resources/public/js/compiled" "target"]
+  :clean-targets ^{:protect false} [
+    "resources/public/js/compiled"
+    "resources/test/compiled.js"
+    "target"]
 
   :cljsbuild {
-    :builds [{:id "dev"
-              :source-paths ["src"]
+    :builds {
+      :dev {
+        :source-paths ["src"]
+        :figwheel {}
+        :compiler {
+          :main cellf.core
+          :asset-path "js/compiled/out"
+          :output-to "resources/public/js/compiled/cellf.js"
+          :output-dir "resources/public/js/compiled/out"
+          :optimizations :none
+          :source-map true
+          :source-map-timestamp true
+          :cache-analysis true}}
 
-              :figwheel {}
+      :min {
+        :source-paths ["src"]
+        :compiler {
+          :output-to "cellf.min.js"
+          :main cellf.core
+          :optimizations :advanced
+          :pretty-print false
+          :externs ["resources/externs/gif.ext.js"]}}
 
-              :compiler {:main cellf.core
-                         :asset-path "js/compiled/out"
-                         :output-to "resources/public/js/compiled/cellf.js"
-                         :output-dir "resources/public/js/compiled/out"
-                         :optimizations :none
-                         :source-map true
-                         :source-map-timestamp true
-                         :cache-analysis true }}
-             {:id "min"
-              :source-paths ["src"]
-              :compiler {:output-to "cellf.min.js"
-                         :main cellf.core
-                         :optimizations :advanced
-                         :pretty-print false
-                         :externs ["resources/externs/gif.ext.js"]}}]}
+      :test {
+        :source-paths ["src" "test"]
+        :compiler {
+          :output-to "resources/test/compiled.js"
+          :output-dir "resources/test"
+          :optimizations :simple
+          :pretty-print true}}}
+
+    :test-commands {
+      "test" ["phantomjs" "resources/test/test.js" "resources/test/test.html"]}}
 
   :figwheel {:css-dirs ["resources/public/css"]})
