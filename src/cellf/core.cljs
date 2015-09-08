@@ -215,8 +215,7 @@
       (<! (timeout (:tick-ms @app-state)))
       (<! raf-chan)
       (let [app        @app-state
-            moves      (:moves app)
-            move-count (count moves)
+            move-count (count (:moves app))
             tick       (if (>= tick move-count) 0 tick)]
         (swap! app-state assoc :tick tick)
         (<! (paint-canvas! app tick))
