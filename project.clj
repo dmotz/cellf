@@ -5,12 +5,12 @@
             :url "http://opensource.org/licenses/mit-license.html"}
 
   :dependencies [[org.clojure/clojure "1.7.0"]
-                 [org.clojure/clojurescript "1.7.122"]
-                 [org.clojure/core.async "0.1.346.0-17112a-alpha"]
+                 [org.clojure/clojurescript "1.7.189"]
+                 [org.clojure/core.async "0.2.374"]
                  [org.omcljs/om "0.9.0"]]
 
-  :plugins [[lein-cljsbuild "1.1.0"]
-            [lein-figwheel "0.4.1"]]
+  :plugins [[lein-cljsbuild "1.1.1"]
+            [lein-figwheel "0.5.0-2"]]
 
   :source-paths ["src" "test"]
 
