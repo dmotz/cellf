@@ -90,7 +90,6 @@
     range
     vec
     (conj :empty)))
-  ;(conj (vec (range (dec (sq size)))) :empty))
 
 
 (defn make-cells [size win-state]
