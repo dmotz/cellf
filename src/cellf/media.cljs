@@ -13,15 +13,15 @@
 
 
 (defn get-media
-  ([] (get-media {:video true :audio false}))
+  ([]
+   (get-media {:video true :audio false}))
   ([opts]
-    (let [c (chan)]
-      (if-let [native-gum (find-native js/navigator "getUserMedia")]
-        (native-gum
-          (clj->js opts)
-          #(put! c {
-            :status :success
-            :data   (.createObjectURL js/URL %)})
-          #(put! c {:status :error :data :denied}))
-        (put! c {:status :error :data :unsupported}))
-      c)))
+   (let [c (chan)]
+     (if-let [native-gum (find-native js/navigator "getUserMedia")]
+       (native-gum
+         (clj->js opts)
+         #(put! c {:status :success
+                   :data   (.createObjectURL js/URL %)})
+         #(put! c {:status :error :data :denied}))
+       (put! c {:status :error :data :unsupported}))
+     c)))
