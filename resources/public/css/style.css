@@ -250,8 +250,20 @@ button.wait:hover {
   -ms-user-select: none;
 }
 
-.cell.adjacent {
-  cursor: pointer;
+.adjacent-l {
+  cursor: w-resize;
+}
+
+.adjacent-r {
+  cursor: e-resize;
+}
+
+.adjacent-u {
+  cursor: n-resize;
+}
+
+.adjacent-d {
+  cursor: s-resize;
 }
 
 input[type='range'] {

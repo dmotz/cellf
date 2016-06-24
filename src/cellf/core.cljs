@@ -149,11 +149,12 @@
 (defn adj? [app i]
   (let [{size :grid-size {emp :empty} :cells} app
         emp' (inc emp)]
-    (or
-      (= i (- emp size))
-      (and (= i (dec emp)) (pos? (mod emp size)))
-      (and (= i emp') (pos? (mod emp' size)))
-      (= i (+ emp size)))))
+    (cond
+      (= i (- emp size)) \d
+      (= i (+ emp size)) \u
+      (and (= i emp') (pos? (mod emp' size))) \l
+      (and (= i (dec emp)) (pos? (mod emp size))) \r
+      :else false)))
 
 
 (defn swap-cell [cells n]
@@ -182,11 +183,11 @@
 
 (defn cell [app [n idx]]
   (if (not= n :empty)
-    (let [is-adj (adj? app idx)]
+    (let [adj (adj? app idx)]
       (dom/div #js {:react-key n
-                    :className (str "cell" (when is-adj " adjacent"))
+                    :className (str "cell" (when adj (str " adjacent-" adj)))
                     :style     (get-cell-style app idx)
-                    :onClick   #(when is-adj (move! app n))}
+                    :onClick   #(when adj (move! app n))}
           (dom/video #js {:src      (:stream app)
                           :autoPlay "autoplay"
                           :style    (get-bg-transform app n)})
