@@ -147,11 +147,12 @@
 
 
 (defn adj? [app i]
-  (let [{size :grid-size {emp :empty} :cells} app]
+  (let [{size :grid-size {emp :empty} :cells} app
+        emp' (inc emp)]
     (or
       (= i (- emp size))
       (and (= i (dec emp)) (pos? (mod emp size)))
-      (and (= i (inc emp)) (pos? (mod (inc emp) size)))
+      (and (= i emp') (pos? (mod emp' size)))
       (= i (+ emp size)))))
 
 
