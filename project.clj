@@ -10,7 +10,7 @@
                  [org.omcljs/om "0.9.0"]]
 
   :plugins [[lein-cljsbuild "1.1.3"]
-            [lein-figwheel "0.5.4-4"]]
+            [lein-figwheel "0.5.4-7"]]
 
   :source-paths ["src" "test"]
 
