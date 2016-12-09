@@ -2,7 +2,8 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [cljs.core.async :refer [<! >! take! put! chan timeout]]
-            [cellf.media :as media])
+            [cellf.media :as media]
+            [cellf.strings :refer [strings]])
   (:require-macros [cljs.core.async.macros :refer [go go-loop]]))
 
 (enable-console-print!)
@@ -326,10 +327,8 @@
           (dom/div nil
             (dom/h1 nil "!!!")
             (if (= media-error :denied)
-              "Sorry, Cellf doesn't work without camera access."
-              (str
-                "Sorry, it looks like your device or browser doesn't support camera access. "
-                "Try Cellf using Chrome or Firefox on a device that supports WebRTC."))
+              (:cam-denied strings)
+              (:cam-failed strings))
             (dom/button #js {:onClick get-camera!} "try again")
             (dom/button #js {:onClick #(js/open source-url)} "view cellf source"))
 
@@ -337,14 +336,8 @@
           (dom/div nil
             (dom/img #js {:src "img/cellf-white.svg" :className "logo"})
             (dom/h1 nil "Hi")
-            (dom/p nil
-              (str
-                "Cellf is an interactive experiment that reflects you and your "
-                "surroundings as you play. When you click OK, Cellf will ask for camera access."))
-            (dom/p nil
-              (str
-                "There's no server or multiplayer component to this: "
-                "your image stays on your device."))
+            (dom/p nil (:intro1 strings))
+            (dom/p nil (:intro2 strings))
             (dom/button #js {:onClick get-camera!} "✔ ok"))
 
         result-gif
@@ -352,13 +345,13 @@
             (dom/h1 nil "Your Cellf")
             (dom/a #js {:href result-gif :download "cellf.gif" :className "download"}
               (dom/img #js {:src result-gif}))
-            "Click this gif to save it. Share your Cellf with the world."
+            (:gif-result strings)
             (dom/button #js {:onClick #(om/update! app :result-gif nil)} "✔ done"))
 
         winner?
           (dom/div nil
             (dom/h1 nil "You win!")
-            "For more of a challenge, drag the slider to create a bigger grid."
+            (:win-info strings)
             (apply dom/button
               (if gif-building?
                 [#js {:className "wait"} "hold on"]
@@ -368,21 +361,14 @@
         show-about?
           (dom/div nil
             (dom/h1 nil "How to play")
-            (dom/p nil
-              (str
-                "Simply click a cell next to the empty cell to move it. "
-                "When you shuffle them into the correct order, you win."))
-            (dom/p nil
-              (str
-                "You can also export a replay of your moves to an animated gif by "
-                "clicking the 'make gif' button."))
+            (dom/p nil (:how-to1 strings))
+            (dom/p nil (:how-to2 strings))
 
             (dom/h1 nil "About Cellf")
             (dom/p nil
-              "Cellf was created by Dan Motzenbecker and is "
+              (:about1 strings)
               (dom/a #js {:href source-url} "open source")
-              " on Github. "
-              "For more experiments like this, visit "
+              (:about2 strings)
               (dom/a #js {:href home-url} "oxism.com")
               \.)
 
