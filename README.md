@@ -15,3 +15,10 @@ Clone the repository and run
 $ lein figwheel
 ```
 to start a development server on port `3449`.
+
+
+Run
+```
+$ lein cljsbuild once min
+```
+for optimized output.
