@@ -133,6 +133,7 @@ button.wait:hover {
 
 .modal img {
   margin-bottom: 3rem;
+  outline: 12px solid #fff;
 }
 
 .modal h1 {
