@@ -1,6 +1,6 @@
-![Cellf](http://oxism.com/cellf/img/cellf.svg)
-## [Play here](https://rawgit.com/dmotz/cellf/gh-pages/index.html)
-[Dan Motzenbecker](http://oxism.com), MIT License
+![Cellf](https://oxism.com/cellf/img/cellf.svg)
+## [Play here](https://oxism.com/cellf)
+[Dan Motzenbecker](https://oxism.com), MIT License
 
 Cellf is an interactive experiment that reflects you and your surroundings as you play.
 
