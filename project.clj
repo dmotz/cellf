@@ -5,12 +5,12 @@
             :url "http://opensource.org/licenses/mit-license.html"}
 
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.93"]
-                 [org.clojure/core.async "0.2.385"]
+                 [org.clojure/clojurescript "1.9.293"]
+                 [org.clojure/core.async "0.2.395"]
                  [org.omcljs/om "0.9.0"]]
 
-  :plugins [[lein-cljsbuild "1.1.3"]
-            [lein-figwheel "0.5.4-7"]]
+  :plugins [[lein-cljsbuild "1.1.5"]
+            [lein-figwheel "0.5.8"]]
 
   :source-paths ["src" "test"]
 
@@ -40,6 +40,7 @@
                               :notify-command ["phantomjs" "resources/test/test.js" "resources/test/test.html"]
                               :compiler {:output-to "resources/test/compiled.js"
                                          :optimizations :simple
+                                         :output-dir "resources/public/js/out"
                                          :pretty-print true}}}
 
               :test-commands {"test" ["phantomjs" "resources/test/test.js" "resources/test/test.html"]}}
