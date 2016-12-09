@@ -1,6 +1,6 @@
 (defproject cellf "0.1.0-SNAPSHOT"
   :description "Find yourself"
-  :url "http://oxism.com/cellf"
+  :url "https://oxism.com/cellf"
   :license {:name "The MIT License (MIT)"
             :url "http://opensource.org/licenses/mit-license.html"}
 
