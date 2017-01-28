@@ -5,7 +5,7 @@
             :url "http://opensource.org/licenses/mit-license.html"}
 
   :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.293"]
+                 [org.clojure/clojurescript "1.9.456"]
                  [org.clojure/core.async "0.2.395"]
                  [org.omcljs/om "0.9.0"]]
 
