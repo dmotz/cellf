@@ -12,7 +12,7 @@ React (via Om), and core.async.
 
 Clone the repository and run
 ```
-$ lein figwheel
+$ lein figwheel dev
 ```
 to start a development server on port `3449`.
 
