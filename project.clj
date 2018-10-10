@@ -4,13 +4,13 @@
   :license {:name "The MIT License (MIT)"
             :url "http://opensource.org/licenses/mit-license.html"}
 
-  :dependencies [[org.clojure/clojure "1.8.0"]
-                 [org.clojure/clojurescript "1.9.456"]
-                 [org.clojure/core.async "0.2.395"]
+  :dependencies [[org.clojure/clojure "1.9.0"]
+                 [org.clojure/clojurescript "1.10.339"]
+                 [org.clojure/core.async "0.4.474"]
                  [org.omcljs/om "0.9.0"]]
 
-  :plugins [[lein-cljsbuild "1.1.5"]
-            [lein-figwheel "0.5.8"]]
+  :plugins [[lein-cljsbuild "1.1.7"]
+            [lein-figwheel "0.5.16"]]
 
   :source-paths ["src" "test"]
 
