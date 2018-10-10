@@ -135,15 +135,15 @@
          :fontSize   (/ px 10)}))
 
 
-(defn get-bg-transform [app i]
+(defn get-bg-transform [{:keys [grid-size vid-ratio vid-offset]} i]
   (if (= i :empty)
     nil
-    (let [size  (:grid-size app)
+    (let [size  grid-size
           pct   (/ 100 size)
           [x y] (get-cell-xy i size)]
       #js {:height    (str (* size 100) \%)
            :transform (t3d
-                        (- (+ (/ (* x pct) (:vid-ratio app)) (:vid-offset app)))
+                        (- (+ (/ (* x pct) vid-ratio) vid-offset))
                         (- (* pct y)))})))
 
 
@@ -182,17 +182,35 @@
   (om/update! app (merge app (make-game app size speed))))
 
 
-(defn cell [app [n idx]]
-  (if (not= n :empty)
-    (let [adj (adj? app idx)]
-      (dom/div #js {:react-key n
-                    :className (str "cell" (when adj (str " adjacent-" adj)))
-                    :style     (get-cell-style app idx)
-                    :onClick   #(when adj (move! app n))}
-          (dom/video #js {:src      (:stream app)
-                          :autoPlay "autoplay"
-                          :style    (get-bg-transform app n)})
-          (dom/label nil (inc n))))))
+(defn set-vid-src [owner stream]
+  (aset (om/get-node owner "vid") "srcObject" stream))
+
+
+(defn cell [{:keys [stream n idx] :as app} owner]
+  (reify
+    om/IDidMount
+    (did-mount [_]
+      (when (not= n :empty)
+        (set-vid-src owner stream)))
+
+    om/IDidUpdate
+    (did-update [this prev-props prev-state]
+      (when (and (not= n :empty) (not= n (:n prev-props)))
+        (set-vid-src owner stream)))
+
+    om/IRender
+    (render [_]
+      (when (not= n :empty)
+        (let [adj (adj? app idx)]
+          (dom/div
+            #js {:react-key n
+                 :className (str "cell" (when adj (str " adjacent-" adj)))
+                 :style     (get-cell-style app idx)
+                 :onClick   #(when adj (move! app n))}
+            (dom/video #js {:autoPlay "autoplay"
+                            :style    (get-bg-transform app n)
+                            :ref      "vid"})
+            (dom/label nil (inc n))))))))
 
 
 (defn grid [{:keys [cells grid-px show-nums] :as app}]
@@ -201,7 +219,10 @@
       dom/div
       #js {:className (str "grid" (when show-nums " show-nums"))
            :style     #js {:width grid-px :height grid-px}}
-      (map (partial cell app) cells))))
+      (map
+       (fn [[n idx]]
+         (om/build cell (merge app {:n n :idx idx})))
+       cells))))
 
 
 (defn set-grid-size! [app size]
@@ -295,7 +316,7 @@
                      :show-about? true
                      :media-error nil})
                   (js/setTimeout start! 500))))
-            (aset "src" data)))
+            (aset "srcObject" data)))
         (swap! app-state assoc :media-error data)))))
 
 
