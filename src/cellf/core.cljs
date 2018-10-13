@@ -14,6 +14,7 @@
 (def resize-ms    200)
 (def source-url   "https://github.com/dmotz/cellf")
 (def home-url     "http://oxism.com")
+(def ls-key       "ok")
 
 (defonce img-cache (atom []))
 
@@ -309,7 +310,7 @@
           (recur (inc tick)))))))
 
 
-(defn get-camera! []
+(defn get-camera! [skip-howto?]
   (swap! app-state assoc :camera-waiting? true)
   (take!
     (media/get-media)
@@ -344,11 +345,14 @@
                                     (max 1 (* vw 2))))
                      :canvas-node canvas
                      :ctx         (.getContext canvas "2d")
-                     :show-about? true
+                     :show-about? (not skip-howto?)
                      :media-error nil})
-                  (js/setTimeout start! 500))))
+                  (js/setTimeout start! 500)
+                  (.setItem js/localStorage ls-key "1"))))
             (aset "srcObject" data)))
-        (swap! app-state assoc :media-error data)))))
+        (do
+          (swap! app-state assoc :media-error data :previous-grant? false)
+          (.clear js/localStorage))))))
 
 
 (defn make-gif [app ms]
@@ -367,7 +371,8 @@
 
 
 (defn modal [{:keys [stream media-error show-about? result-gif cells win-state
-                     grid-size tick-ms gif-building? camera-waiting?] :as app}]
+                     grid-size tick-ms gif-building? camera-waiting?
+                     previous-grant?] :as app}]
   (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div
@@ -391,14 +396,16 @@
              "view cellf source"))
 
         no-stream?
-          (dom/div nil
-            (dom/h1 nil "Hi")
-            (dom/p nil (:intro1 strings))
-            (dom/p nil (:intro2 strings))
-            (apply dom/button
-              (if camera-waiting?
-                [#js {:className "wait"} "hold on"]
-                [#js {:onClick get-camera!} "✔ ok"])))
+          (if previous-grant?
+            (dom/div nil "One moment…")
+            (dom/div nil
+              (dom/h1 nil "Hi")
+              (dom/p nil (:intro1 strings))
+              (dom/p nil (:intro2 strings))
+              (apply dom/button
+                (if camera-waiting?
+                  [#js {:className "wait"} "hold on"]
+                  [#js {:onClick get-camera!} "✔ ok"]))))
 
         result-gif
           (dom/div nil
@@ -449,6 +456,10 @@
     (reify
       om/IDidMount
       (did-mount [_]
+        (when (.getItem js/localStorage ls-key)
+          (swap! app-state assoc :previous-grant? true)
+          (get-camera! true))
+
         (def playback-ctx
           (let [ctx (-> (om/get-node owner "playback") (.getContext "2d"))]
             (aset ctx "fillStyle" "#292929")
