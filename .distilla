@@ -1,0 +1,13 @@
+preview: true
+
+tasks:
+  lein cljsbuild once min:
+    - cellf.min.js
+    - js/cellf.min.js
+
+  cat resources/public/css/style.css: css/style.css
+
+hashing:
+  index.html:
+    - js/cellf.min.js
+    - css/style.css
