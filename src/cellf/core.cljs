@@ -61,11 +61,14 @@
 (defn inversions [grid]
   (let [cells (order grid)]
     (->>
-      (range (count grid))
+      grid
+      count
+      range
       (map
         (fn [n]
           (->>
-            (drop n cells)
+            cells
+            (drop n)
             (filter #(< % (nth cells n)))
             count)))
       (reduce +))))
@@ -86,7 +89,8 @@
 
 (defn make-cell-list [size]
   (->
-    (sq size)
+    size
+    sq
     dec
     range
     vec
@@ -284,6 +288,7 @@
 
 
 (defn get-camera! []
+  (swap! app-state assoc :camera-waiting? true)
   (take!
     (media/get-media)
     (fn [{:keys [status data]}]
@@ -336,7 +341,7 @@
 
 
 (defn modal [{:keys [stream media-error show-about? result-gif cells win-state
-                     grid-size tick-ms gif-building?] :as app}]
+                     grid-size tick-ms gif-building? camera-waiting?] :as app}]
   (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div
@@ -350,7 +355,10 @@
             (if (= media-error :denied)
               (:cam-denied strings)
               (:cam-failed strings))
-            (dom/button #js {:onClick get-camera!} "try again")
+            (apply dom/button
+              (if camera-waiting?
+                [#js {:className "wait"} "hold on"]
+                [#js {:onClick get-camera!} "try again"]))
             (dom/button #js {:onClick #(js/open source-url)} "view cellf source"))
 
         no-stream?
@@ -358,7 +366,10 @@
             (dom/h1 nil "Hi")
             (dom/p nil (:intro1 strings))
             (dom/p nil (:intro2 strings))
-            (dom/button #js {:onClick get-camera!} "✔ ok"))
+            (apply dom/button
+              (if camera-waiting?
+                [#js {:className "wait"} "hold on"]
+                [#js {:onClick get-camera!} "✔ ok"])))
 
         result-gif
           (dom/div nil
