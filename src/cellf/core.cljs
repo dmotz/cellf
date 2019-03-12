@@ -364,8 +364,10 @@
         (<! (paint-canvas! app idx))
         (.addFrame gif canvas #js {:delay ms :copy true}))
       (doto gif
-        (.on "finished" (fn [_]
-                          (om/update! app :result-gif)
+        (.on "finished" (fn [data]
+                          (om/update! app
+                                      :result-gif
+                                      (.createObjectURL js/URL data))
                           (om/update! app :gif-building? false)))
         (.render)))))
 
