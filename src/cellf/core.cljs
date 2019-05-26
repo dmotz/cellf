@@ -14,7 +14,7 @@
 (def resize-ms    200)
 (def source-url   "https://github.com/dmotz/cellf")
 (def home-url     "http://oxism.com")
-(def ls-key       "ok")
+(def ls-key       "cellf/ok")
 
 (defonce img-cache (atom []))
 
@@ -211,7 +211,7 @@
         (set-vid-src owner stream)))
 
     om/IDidUpdate
-    (did-update [this prev-props prev-state]
+    (did-update [_ prev-props _]
       (when (and (not= n :empty) (not= n (:n prev-props)))
         (set-vid-src owner stream)))
 
