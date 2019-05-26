@@ -464,7 +464,7 @@
 
         (def playback-ctx
           (let [ctx (-> (om/get-node owner "playback") (.getContext "2d"))]
-            (aset ctx "fillStyle" "#292929")
+            (aset ctx "fillStyle" "#fff")
             ctx))
 
         (defonce resize-loop
