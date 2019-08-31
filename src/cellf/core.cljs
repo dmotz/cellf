@@ -324,7 +324,7 @@
          (doto video
            (aset "autoplay" "autoplay")
            (aset
-            "onplaying"
+            "oncanplaythrough"
             (fn []
               (let [vw (.-videoWidth video)
                     vh (.-videoHeight video)]
