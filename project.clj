@@ -18,31 +18,36 @@
                                     "resources/test/compiled.js"
                                     "target"]
 
-  :cljsbuild {:builds {:dev {:source-paths ["src"]
-                             :figwheel {}
-                             :compiler {:main cellf.core
-                                        :asset-path "js/compiled/out"
-                                        :output-to "resources/public/js/compiled/cellf.js"
-                                        :output-dir "resources/public/js/compiled/out"
-                                        :optimizations :none
-                                        :source-map true
-                                        :source-map-timestamp true
-                                        :cache-analysis true}}
+  :cljsbuild
+  {:builds {:dev {:source-paths ["src"]
+                  :figwheel {}
+                  :compiler {:main cellf.core
+                             :asset-path "js/compiled/out"
+                             :output-to "resources/public/js/compiled/cellf.js"
+                             :output-dir "resources/public/js/compiled/out"
+                             :optimizations :none
+                             :source-map true
+                             :source-map-timestamp true
+                             :cache-analysis true}}
 
-                       :min {:source-paths ["src"]
-                             :compiler {:output-to "cellf.min.js"
-                                        :main cellf.core
-                                        :optimizations :advanced
-                                        :pretty-print false
-                                        :externs ["resources/externs/gif.ext.js"]}}
+            :min {:source-paths ["src"]
+                  :compiler {:output-to "cellf.min.js"
+                             :main cellf.core
+                             :optimizations :advanced
+                             :pretty-print false
+                             :externs ["resources/externs/gif.ext.js"]}}
 
-                       :test {:source-paths ["src" "test"]
-                              :notify-command ["phantomjs" "resources/test/test.js" "resources/test/test.html"]
-                              :compiler {:output-to "resources/test/compiled.js"
-                                         :optimizations :simple
-                                         :output-dir "resources/public/js/out"
-                                         :pretty-print true}}}
+            :test {:source-paths ["src" "test"]
+                   :notify-command ["phantomjs"
+                                    "resources/test/test.js"
+                                    "resources/test/test.html"]
+                   :compiler {:output-to "resources/test/compiled.js"
+                              :optimizations :simple
+                              :output-dir "resources/public/js/out"
+                              :pretty-print true}}}
 
-              :test-commands {"test" ["phantomjs" "resources/test/test.js" "resources/test/test.html"]}}
+   :test-commands {"test" ["phantomjs"
+                           "resources/test/test.js"
+                           "resources/test/test.html"]}}
 
   :figwheel {:css-dirs ["resources/public/css"]})
