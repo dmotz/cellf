@@ -347,7 +347,7 @@
                   :ctx         (.getContext canvas "2d")
                   :show-about? (not skip-howto?)
                   :media-error nil})
-                (start!)
+                (js/setTimeout start! 0)
                 (.setItem js/localStorage ls-key "1"))))
            (aset "srcObject" data)))
        (do
