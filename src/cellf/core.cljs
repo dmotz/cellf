@@ -29,8 +29,8 @@
 (defn promise-chan []
   (let [c (chan)]
     (take!
-      c
-      #(go-loop []
+     c
+     #(go-loop []
         (>! c %)
         (recur)))
     c))
@@ -55,34 +55,34 @@
     (doto img-el
       (aset "src" img-data)
       (aset
-        "onload"
-        (fn []
-          (js-delete img-el "onload")
-          (put! pc img-el))))
+       "onload"
+       (fn []
+         (js-delete img-el "onload")
+         (put! pc img-el))))
     {:cells cells :image img-data}))
 
 
 (defn order [grid]
   (->>
-    grid
-    (sort-by second)
-    (map first)))
+   grid
+   (sort-by second)
+   (map first)))
 
 
 (defn inversions [grid]
   (let [cells (order grid)]
     (->>
-      grid
-      count
-      range
-      (map
-        (fn [n]
-          (->>
-            cells
-            (drop n)
-            (filter #(< % (nth cells n)))
-            count)))
-      (reduce +))))
+     grid
+     count
+     range
+     (map
+      (fn [n]
+        (->>
+         cells
+         (drop n)
+         (filter #(< % (nth cells n)))
+         count)))
+     (reduce +))))
 
 
 (defn blank-at-row [grid size]
@@ -91,30 +91,30 @@
 
 (def solvable?
   (memoize
-    (fn [grid size]
-      (let [even-inversions? (even? (inversions grid))]
-        (or
-          (and (odd? size) even-inversions?)
-          (and
-           (even? size)
-           (= even-inversions? (odd? (blank-at-row grid size)))))))))
+   (fn [grid size]
+     (let [even-inversions? (even? (inversions grid))]
+       (or
+        (and (odd? size) even-inversions?)
+        (and
+         (even? size)
+         (= even-inversions? (odd? (blank-at-row grid size)))))))))
 
 
 (defn make-cell-list [size]
   (->
-    size
-    sq
-    dec
-    range
-    vec
-    (conj :empty)))
+   size
+   sq
+   dec
+   range
+   vec
+   (conj :empty)))
 
 
 (defn make-cells [size win-state]
   (let [shuffled (zipmap (make-cell-list size) (shuffle (range (sq size))))]
     (if (or
-          (= shuffled win-state)
-          (not (solvable? shuffled size)))
+         (= shuffled win-state)
+         (not (solvable? shuffled size)))
       (recur size win-state)
       shuffled)))
 
@@ -160,8 +160,8 @@
           [x y] (get-cell-xy i size)]
       #js {:height    (str (* size 100) \%)
            :transform (t3d
-                        (- (+ (/ (* x pct) vid-ratio) vid-offset))
-                        (- (* pct y)))})))
+                       (- (+ (/ (* x pct) vid-ratio) vid-offset))
+                       (- (* pct y)))})))
 
 
 (defn adj? [app i]
@@ -179,13 +179,13 @@
   (let [current-idx (cells n)
         empty-idx   (:empty cells)]
     (into
-      {}
-      (map
-        (fn [[k idx]]
-          (if (= k :empty)
-            [:empty current-idx]
-            (if (= k n) [k empty-idx] [k idx])))
-        cells))))
+     {}
+     (map
+      (fn [[k idx]]
+        (if (= k :empty)
+          [:empty current-idx]
+          (if (= k n) [k empty-idx] [k idx])))
+      cells))))
 
 
 (defn move! [{:keys [moves win-state] :as app} n]
@@ -220,26 +220,26 @@
       (when (not= n :empty)
         (let [adj (adj? app idx)]
           (dom/div
-            #js {:react-key n
-                 :className (str "cell" (when adj (str " adjacent-" adj)))
-                 :style     (get-cell-style app idx)
-                 :onClick   #(when adj (move! app n))}
-            (dom/video #js {:autoPlay "autoplay"
-                            :style    (get-bg-transform app n)
-                            :ref      "vid"})
-            (dom/label nil (inc n))))))))
+           #js {:react-key n
+                :className (str "cell" (when adj (str " adjacent-" adj)))
+                :style     (get-cell-style app idx)
+                :onClick   #(when adj (move! app n))}
+           (dom/video #js {:autoPlay "autoplay"
+                           :style    (get-bg-transform app n)
+                           :ref      "vid"})
+           (dom/label nil (inc n))))))))
 
 
 (defn grid [{:keys [cells grid-px show-nums] :as app}]
   (om/component
-    (apply
-      dom/div
-      #js {:className (str "grid" (when show-nums " show-nums"))
-           :style     #js {:width grid-px :height grid-px}}
-      (map
-       (fn [[n idx]]
-         (om/build cell (merge app {:n n :idx idx})))
-       cells))))
+   (apply
+    dom/div
+    #js {:className (str "grid" (when show-nums " show-nums"))
+         :style     #js {:width grid-px :height grid-px}}
+    (map
+     (fn [[n idx]]
+       (om/build cell (merge app {:n n :idx idx})))
+     cells))))
 
 
 (defn set-grid-size! [app size]
@@ -313,46 +313,46 @@
 (defn get-camera! [skip-howto?]
   (swap! app-state assoc :camera-waiting? true)
   (take!
-    (media/get-media)
-    (fn [{:keys [status data]}]
-      (if (= status :success)
-        (let [video  (.createElement js/document "video")
-              canvas (.createElement js/document "canvas")]
-          (doto canvas
-            (aset "width"  capture-size)
-            (aset "height" capture-size))
-          (doto video
-            (aset "autoplay" "autoplay")
-            (aset
-              "onplaying"
-              (fn []
-                (let [vw (.-videoWidth video)
-                      vh (.-videoHeight video)]
-                  (js-delete video "onplaying")
-                  (swap!
-                    app-state
-                    merge
-                    {:stream      data
-                     :grid-px     (get-max-grid-px)
-                     :vid-node    video
-                     :vid-w       vw
-                     :vid-h       vh
-                     :vid-ratio   (/ vw vh)
-                     :vid-offset  (*
-                                   100
-                                   (/
-                                    (max 1 (.abs js/Math (- vw vh)))
-                                    (max 1 (* vw 2))))
-                     :canvas-node canvas
-                     :ctx         (.getContext canvas "2d")
-                     :show-about? (not skip-howto?)
-                     :media-error nil})
-                  (js/setTimeout start! 500)
-                  (.setItem js/localStorage ls-key "1"))))
-            (aset "srcObject" data)))
-        (do
-          (swap! app-state assoc :media-error data :previous-grant? false)
-          (.clear js/localStorage))))))
+   (media/get-media)
+   (fn [{:keys [status data]}]
+     (if (= status :success)
+       (let [video  (.createElement js/document "video")
+             canvas (.createElement js/document "canvas")]
+         (doto canvas
+           (aset "width"  capture-size)
+           (aset "height" capture-size))
+         (doto video
+           (aset "autoplay" "autoplay")
+           (aset
+            "onplaying"
+            (fn []
+              (let [vw (.-videoWidth video)
+                    vh (.-videoHeight video)]
+                (js-delete video "onplaying")
+                (swap!
+                 app-state
+                 merge
+                 {:stream      data
+                  :grid-px     (get-max-grid-px)
+                  :vid-node    video
+                  :vid-w       vw
+                  :vid-h       vh
+                  :vid-ratio   (/ vw vh)
+                  :vid-offset  (*
+                                100
+                                (/
+                                 (max 1 (.abs js/Math (- vw vh)))
+                                 (max 1 (* vw 2))))
+                  :canvas-node canvas
+                  :ctx         (.getContext canvas "2d")
+                  :show-about? (not skip-howto?)
+                  :media-error nil})
+                (js/setTimeout start! 500)
+                (.setItem js/localStorage ls-key "1"))))
+           (aset "srcObject" data)))
+       (do
+         (swap! app-state assoc :media-error data :previous-grant? false)
+         (.clear js/localStorage))))))
 
 
 (defn make-gif [app ms]
@@ -378,173 +378,190 @@
   (let [winner?    (and cells (= cells win-state))
         no-stream? (not stream)]
     (dom/div
-      #js {:className
-           (str "modal"
-             (when (or no-stream? media-error show-about? result-gif winner?)
-               " active"))}
-      (cond
-        media-error
-          (dom/div nil
-            (dom/h1 nil "!!!")
-            (if (= media-error :denied)
-              (:cam-denied strings)
-              (:cam-failed strings))
-            (apply dom/button
-              (if camera-waiting?
-                [#js {:className "wait"} "hold on"]
-                [#js {:onClick get-camera!} "try again"]))
-            (dom/button
-             #js {:onClick #(js/open source-url)}
-             "view cellf source"))
+     #js {:className
+          (str "modal"
+               (when (or no-stream? media-error show-about? result-gif winner?)
+                 " active"))}
+     (cond
+       media-error
+       (dom/div nil
+                (dom/h1 nil "!!!")
+                (if (= media-error :denied)
+                  (:cam-denied strings)
+                  (:cam-failed strings))
+                (apply dom/button
+                       (if camera-waiting?
+                         [#js {:className "wait"} "hold on"]
+                         [#js {:onClick get-camera!} "try again"]))
+                (dom/button
+                 #js {:onClick #(js/open source-url)}
+                 "view cellf source"))
 
-        no-stream?
-          (if previous-grant?
-            (dom/div nil "One moment…")
-            (dom/div nil
-              (dom/h1 nil "Hi")
-              (dom/p nil (:intro1 strings))
-              (dom/p nil (:intro2 strings))
-              (apply dom/button
-                (if camera-waiting?
-                  [#js {:className "wait"} "hold on"]
-                  [#js {:onClick get-camera!} "✔ ok"]))))
+       no-stream?
+       (if previous-grant?
+         (dom/div nil "One moment…")
+         (dom/div nil
+                  (dom/h1 nil "Hi")
+                  (dom/p nil (:intro1 strings))
+                  (dom/p nil (:intro2 strings))
+                  (apply dom/button
+                         (if camera-waiting?
+                           [#js {:className "wait"} "hold on"]
+                           [#js {:onClick get-camera!} "✔ ok"]))))
 
-        result-gif
-          (dom/div nil
-            (dom/h1 nil "Your Cellf")
-            (dom/a
-              #js {:href result-gif :download "cellf.gif" :className "download"}
-              (dom/img #js {:src result-gif}))
-            (:gif-result strings)
-            (dom/button
-              #js {:onClick #(om/update! app :result-gif nil)}
-              "✔ done"))
+       result-gif
+       (dom/div nil
+                (dom/h1 nil "Your Cellf")
+                (dom/a
+                 #js {:href result-gif
+                      :download "cellf.gif"
+                      :className "download"}
+                 (dom/img #js {:src result-gif}))
+                (:gif-result strings)
+                (dom/button
+                 #js {:onClick #(om/update! app :result-gif nil)}
+                 "✔ done"))
 
-        winner?
-          (dom/div nil
-            (dom/h1 nil "You win!")
-            (:win-info strings)
-            (apply dom/button
-              (if gif-building?
-                [#js {:className "wait"} "hold on"]
-                [#js {:onClick #(make-gif app tick-ms)} "make gif replay"]))
-            (dom/button
-              #js {:onClick #(set-grid-size! app grid-size)}
-              "new game"))
+       winner?
+       (dom/div nil
+                (dom/h1 nil "You win!")
+                (:win-info strings)
+                (apply dom/button
+                       (if gif-building?
+                         [#js {:className "wait"} "hold on"]
+                         [#js {:onClick #(make-gif app tick-ms)}
+                          "make gif replay"]))
+                (dom/button
+                 #js {:onClick #(set-grid-size! app grid-size)}
+                 "new game"))
 
-        show-about?
-          (dom/div nil
-            (dom/h1 nil "How to play")
-            (dom/p nil (:how-to1 strings))
-            (dom/p nil (:how-to2 strings))
+       show-about?
+       (dom/div nil
+                (dom/h1 nil "How to play")
+                (dom/p nil (:how-to1 strings))
+                (dom/p nil (:how-to2 strings))
 
-            (dom/h1 nil "About Cellf")
-            (dom/p nil
-              (:about1 strings)
-              (dom/a #js {:href source-url} "open source")
-              (:about2 strings)
-              (dom/a #js {:href home-url} "oxism.com")
-              \.)
+                (dom/h1 nil "About Cellf")
+                (dom/p nil
+                       (:about1 strings)
+                       (dom/a #js {:href source-url} "open source")
+                       (:about2 strings)
+                       (dom/a #js {:href home-url} "oxism.com")
+                       \.)
 
-            (dom/button
-              #js {:onClick #(om/update! app :show-about? false)}
-              "✔ got it"))))))
+                (dom/button
+                 #js {:onClick #(om/update! app :show-about? false)}
+                 "✔ got it"))))))
 
 
 (om/root
-  (fn [{:keys [stream moves tick tick-ms grid-size show-nums gif-building?]
-        :as app}
-       owner]
-    (reify
-      om/IDidMount
-      (did-mount [_]
-        (when (.getItem js/localStorage ls-key)
-          (swap! app-state assoc :previous-grant? true)
-          (get-camera! true))
+ (fn [{:keys [stream moves tick tick-ms grid-size show-nums gif-building?]
+       :as app}
+      owner]
+   (reify
+     om/IDidMount
+     (did-mount [_]
+       (when (.getItem js/localStorage ls-key)
+         (swap! app-state assoc :previous-grant? true)
+         (get-camera! true))
 
-        (def playback-ctx
-          (let [ctx (-> (om/get-node owner "playback") (.getContext "2d"))]
-            (aset ctx "fillStyle" "#fff")
-            ctx))
+       (def playback-ctx
+         (let [ctx (-> (om/get-node owner "playback") (.getContext "2d"))]
+           (aset ctx "fillStyle" "#fff")
+           ctx))
 
-        (defonce resize-loop
-          (let [resize-chan (chan)]
-            (.addEventListener js/window "resize" #(put! resize-chan true))
-            (go-loop [open true]
-              (when open (<! resize-chan))
-              (let [throttle (timeout resize-ms)]
-                (if (= throttle (last (alts! [throttle resize-chan])))
-                  (do
-                    (swap! app-state assoc :grid-px (get-max-grid-px))
-                    (recur true))
-                  (recur false)))))))
+       (defonce resize-loop
+         (let [resize-chan (chan)]
+           (.addEventListener js/window "resize" #(put! resize-chan true))
+           (go-loop [open true]
+             (when open (<! resize-chan))
+             (let [throttle (timeout resize-ms)]
+               (if (= throttle (last (alts! [throttle resize-chan])))
+                 (do
+                   (swap! app-state assoc :grid-px (get-max-grid-px))
+                   (recur true))
+                 (recur false)))))))
 
-      om/IRender
-      (render [_]
-        (dom/div nil
-          (modal app)
-          (dom/div
-            #js {:id        "sidebar"
-                 :className (when-not stream "hidden")
-                 :style     #js {:width capture-size}}
+     om/IRender
+     (render [_]
+       (dom/div nil
+                (modal app)
+                (dom/div
+                 #js {:id        "sidebar"
+                      :className (when-not stream "hidden")
+                      :style     #js {:width capture-size}}
 
-            (dom/img #js {:src "img/cellf.svg" :alt "Cellf"})
-            (dom/h2 nil "find yourself")
-            (dom/canvas #js {:ref    "playback"
-                             :width  capture-size
-                             :height (* capture-size 2)})
+                 (dom/img #js {:src "img/cellf.svg" :alt "Cellf"})
+                 (dom/h2 nil "find yourself")
+                 (dom/canvas #js {:ref    "playback"
+                                  :width  capture-size
+                                  :height (* capture-size 2)})
 
-            (when stream
-              (dom/div nil
-                (dom/label
-                  #js {:className "move-count"}
-                  (str (inc tick) \/ (count moves)))
+                 (when stream
+                   (dom/div nil
+                            (dom/label
+                             #js {:className "move-count"}
+                             (str (inc tick) \/ (count moves)))
 
-                (dom/label #js {:htmlFor "show-nums"} "show numbers?")
-                (dom/input
-                  #js {:id       "show-nums"
-                       :type     "checkbox"
-                       :checked  show-nums
-                       :onChange #(om/update! app :show-nums (not show-nums))})
+                            (dom/label
+                             #js {:htmlFor "show-nums"}
+                             "show numbers?")
 
-                (dom/label nil
-                  (str "grid size (" grid-size \× grid-size ")")
-                  (dom/em nil "(starts new game)"))
-                (dom/input #js {:type     "range"
-                                :value    grid-size
-                                :min      "2"
-                                :max      "9"
-                                :step     "1"
-                                :onChange
-                                #(set-grid-size!
-                                  app
-                                  (js/parseInt (.. % -target -value)))})
+                            (dom/input
+                             #js {:id       "show-nums"
+                                  :type     "checkbox"
+                                  :checked  show-nums
+                                  :onChange #(om/update!
+                                              app :show-nums (not show-nums))})
 
-                (dom/label nil "playback speed")
-                (dom/input
-                  #js {:type     "range"
-                       :value    (- tick-ms)
-                       :min      "-1000"
-                       :max      "-30"
-                       :step     "10"
-                       :onChange #(set-tick-ms!
-                                    app
-                                    (- (js/parseInt (.. % -target -value))))})
+                            (dom/label
+                             nil
+                             (str "grid size (" grid-size \× grid-size ")")
+                             (dom/em nil "(starts new game)"))
 
-                (apply dom/button
-                  (if gif-building?
-                    [#js {:className "wait"} "hold on"]
-                    [#js {:onClick #(make-gif app tick-ms)} "make gif"]))
+                            (dom/input #js {:type     "range"
+                                            :value    grid-size
+                                            :min      "2"
+                                            :max      "9"
+                                            :step     "1"
+                                            :onChange
+                                            #(set-grid-size!
+                                              app
+                                              (js/parseInt
+                                               (.. % -target -value)))})
 
-                (dom/button
-                  #js {:onClick #(om/update! app :show-about? true)}
-                  "help")
+                            (dom/label nil "playback speed")
 
-                (dom/p nil
-                  (dom/a #js {:href source-url :target "_blank"} "source")
-                  (dom/span nil \/)
-                  (dom/a #js {:href home-url :target "_blank"} "oxism")))))
+                            (dom/input
+                             #js {:type     "range"
+                                  :value    (- tick-ms)
+                                  :min      "-1000"
+                                  :max      "-30"
+                                  :step     "10"
+                                  :onChange #(set-tick-ms!
+                                              app
+                                              (- (js/parseInt
+                                                  (.. % -target -value))))})
 
-          (when stream (om/build grid app))))))
-  app-state
-  {:target (.getElementById js/document "app")})
+                            (apply dom/button
+                                   (if gif-building?
+                                     [#js {:className "wait"} "hold on"]
+                                     [#js {:onClick #(make-gif app tick-ms)}
+                                      "make gif"]))
+
+                            (dom/button
+                             #js {:onClick #(om/update! app :show-about? true)}
+                             "help")
+
+                            (dom/p nil
+                                   (dom/a
+                                    #js {:href source-url :target "_blank"}
+                                    "source")
+                                   (dom/span nil \/)
+                                   (dom/a
+                                    #js {:href home-url :target "_blank"}
+                                    "oxism")))))
+
+                (when stream (om/build grid app))))))
+ app-state
+ {:target (.getElementById js/document "app")})
