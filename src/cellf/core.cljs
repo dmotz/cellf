@@ -317,18 +317,19 @@
    (fn [{:keys [status data]}]
      (if (= status :success)
        (let [video  (.createElement js/document "video")
-             canvas (.createElement js/document "canvas")]
+             canvas (.createElement js/document "canvas")
+             e-key  "oncanplaythrough"]
          (doto canvas
            (aset "width"  capture-size)
            (aset "height" capture-size))
          (doto video
            (aset "autoplay" "autoplay")
            (aset
-            "oncanplaythrough"
+            e-key
             (fn []
               (let [vw (.-videoWidth video)
                     vh (.-videoHeight video)]
-                (js-delete video "onplaying")
+                (js-delete video e-key)
                 (swap!
                  app-state
                  merge
