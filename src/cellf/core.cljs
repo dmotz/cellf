@@ -473,7 +473,9 @@
       owner]
    (reify
      om/IDidMount
-     (did-mount [_]
+     (did-mount
+       [_]
+       (swap! app-state assoc :canvas-node (om/get-node owner canvas-ref))
        (when (.getItem js/localStorage ls-key)
          (swap! app-state assoc :previous-grant? true)
          (get-camera! true))
