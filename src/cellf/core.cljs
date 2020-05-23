@@ -208,6 +208,7 @@
     om/IDidMount
     (did-mount [_]
       (when (not= n :empty)
+        (.setAttribute (om/get-node owner "vid") "playsinline" "")
         (set-vid-src owner stream)))
 
     om/IDidUpdate
