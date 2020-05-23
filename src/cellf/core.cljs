@@ -15,6 +15,8 @@
 (def source-url   "https://github.com/dmotz/cellf")
 (def home-url     "http://oxism.com")
 (def ls-key       "cellf/ok")
+(def canvas-ref   "capture-canvas")
+(def video-ref    "vid")
 
 (defonce img-cache (atom []))
 
@@ -200,7 +202,7 @@
 
 
 (defn set-vid-src [owner stream]
-  (aset (om/get-node owner "vid") "srcObject" stream))
+  (aset (om/get-node owner video-ref) "srcObject" stream))
 
 
 (defn cell [{:keys [stream n idx] :as app} owner]
@@ -208,7 +210,7 @@
     om/IDidMount
     (did-mount [_]
       (when (not= n :empty)
-        (.setAttribute (om/get-node owner "vid") "playsinline" "")
+        (.setAttribute (om/get-node owner video-ref) "playsinline" "")
         (set-vid-src owner stream)))
 
     om/IDidUpdate
@@ -228,7 +230,7 @@
            (dom/video #js {:autoPlay    true
                            :muted       true
                            :style       (get-bg-transform app n)
-                           :ref         "vid"})
+                           :ref         video-ref})
            (dom/label nil (inc n))))))))
 
 
