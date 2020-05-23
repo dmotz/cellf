@@ -188,7 +188,7 @@
       cells))))
 
 
-(defn move! [{:keys [moves win-state] :as app} n]
+(defn move! [{:keys [moves] :as app} n]
   (let [new-layout (swap-cell (:cells app) n)]
     (om/update! app :cells new-layout)
     (om/update! app :moves (conj moves (capture-move app new-layout)))))
