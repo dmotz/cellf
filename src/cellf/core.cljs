@@ -86,7 +86,7 @@
 
 
 (defn blank-at-row [grid size]
-  (Math.floor (/ (:empty grid) size)))
+  (js/Math.floor (/ (:empty grid) size)))
 
 
 (def solvable?
