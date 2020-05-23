@@ -225,9 +225,10 @@
                 :className (str "cell" (when adj (str " adjacent-" adj)))
                 :style     (get-cell-style app idx)
                 :onClick   #(when adj (move! app n))}
-           (dom/video #js {:autoPlay "autoplay"
-                           :style    (get-bg-transform app n)
-                           :ref      "vid"})
+           (dom/video #js {:autoPlay    true
+                           :muted       true
+                           :style       (get-bg-transform app n)
+                           :ref         "vid"})
            (dom/label nil (inc n))))))))
 
 
