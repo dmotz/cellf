@@ -320,14 +320,21 @@
    (media/get-media)
    (fn [{:keys [status data]}]
      (if (= status :success)
-       (let [video  (.createElement js/document "video")
-             canvas (.createElement js/document "canvas")
-             e-key  "oncanplaythrough"]
+       (let [video       (.createElement js/document "video")
+             canvas      (.createElement js/document "canvas")
+             e-key       "oncanplay"]
          (doto canvas
            (aset "width"  capture-size)
            (aset "height" capture-size))
          (doto video
-           (aset "autoplay" "autoplay")
+           (.setAttribute "autoplay" "")
+           (.setAttribute "playsinline" "")
+           (.setAttribute "muted" "")
+           (aset "style" "position" "absolute")
+           (aset "style" "top" "0")
+           (aset "style" "left" "0")
+           (aset "style" "pointerEvents" "none")
+           (aset "style" "opacity" "0")
            (aset
             e-key
             (fn []
@@ -354,7 +361,8 @@
                   :media-error nil})
                 (js/setTimeout start! 100)
                 (.setItem js/localStorage ls-key "1"))))
-           (aset "srcObject" data)))
+           (aset "srcObject" data))
+         (.appendChild (.-body js/document) video))
        (do
          (swap! app-state assoc :media-error data :previous-grant? false)
          (.clear js/localStorage))))))
