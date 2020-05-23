@@ -297,21 +297,23 @@
     (raf-step! c)
     c))
 
+(defonce tick-loop (atom nil))
 
 (defn start! []
   (swap! app-state merge (make-game @app-state default-size))
-  (defonce tick-loop
-    (go-loop [tick 0]
-      (<! (timeout (:tick-ms @app-state)))
-      (<! raf-chan)
-      (let [app        @app-state
-            move-count (count (:moves app))
-            tick       (if (>= tick move-count) 0 tick)]
-        (swap! app-state assoc :tick tick)
-        (<! (paint-canvas! app tick))
-        (if (or (zero? move-count) (= tick (dec move-count)))
-          (recur 0)
-          (recur (inc tick)))))))
+  (when (nil? @tick-loop)
+    (reset! tick-loop
+            (go-loop [tick 0]
+              (<! (timeout (:tick-ms @app-state)))
+              (<! raf-chan)
+              (let [app        @app-state
+                    move-count (count (:moves app))
+                    tick       (if (>= tick move-count) 0 tick)]
+                (swap! app-state assoc :tick tick)
+                (<! (paint-canvas! app tick))
+                (if (or (zero? move-count) (= tick (dec move-count)))
+                  (recur 0)
+                  (recur (inc tick))))))))
 
 
 (defn get-camera! [skip-howto?]
